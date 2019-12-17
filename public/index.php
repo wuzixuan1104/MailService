@@ -35,7 +35,6 @@ if (!defined('ENVIRONMENT')) {
  */
 	$view_folder = '';
 
-
 /*
  * --------------------------------------------------------------------
  * DEFAULT CONTROLLER

@@ -19,5 +19,12 @@
 	"require-dev": {
 		"mikey179/vfsStream": "1.1.*",
 		"phpunit/phpunit": "4.* || 5.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Services\\": "application/libraries/Services",
+			"Utilities\\": "application/libraries/Utilities",
+			"Api\\": "application/libraries/Api"
+		}
 	}
 }

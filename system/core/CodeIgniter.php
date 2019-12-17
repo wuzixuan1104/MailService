@@ -375,6 +375,16 @@ if ( ! is_php('5.4'))
 		require_once APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php';
 	}
 
+	if(isset($CFG->config['loading-cores'])){
+	    if($CFG->config['loading-cores']['load-my-cores'] && count($CFG->config['loading-cores']['my-cores']) > 0){
+	        foreach ($CFG->config['loading-cores']['my-cores'] as $core) {
+	            if (file_exists(APPPATH."core/{$core}.php")){
+	                require_once APPPATH."core/{$core}.php";
+	            }
+	        }
+	    }
+	}
+
 	// Set a mark point for benchmarking
 	$BM->mark('loading_time:_base_classes_end');
 
@@ -405,6 +415,7 @@ if ( ! is_php('5.4'))
 
 	if (empty($class) OR ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
 	{
+
 		$e404 = TRUE;
 	}
 	else
@@ -413,6 +424,7 @@ if ( ! is_php('5.4'))
 
 		if ( ! class_exists($class, FALSE) OR $method[0] === '_' OR method_exists('CI_Controller', $method))
 		{
+
 			$e404 = TRUE;
 		}
 		elseif (method_exists($class, '_remap'))
@@ -444,6 +456,7 @@ if ( ! is_php('5.4'))
 			}
 		}
 	}
+
 	if ($e404)
 	{
 		if ( ! empty($RTR->routes['404_override']))
