@@ -10,8 +10,7 @@ define('PATH_CONTROLLER', PATH_APP . 'controllers' . DIRECTORY_SEPARATOR); // co
 define('PATH_VIEW',       PATH_APP . 'views'       . DIRECTORY_SEPARATOR); // view 絕對位置
 define('PATH_MODEL',      PATH_APP . 'models'      . DIRECTORY_SEPARATOR); // model 絕對位置
 
-$system_path = PATH_SYS;
-
+$system_path 		= PATH_SYS;
 $application_folder = PATH_APP;
 
 if (!defined('ENVIRONMENT')) {
@@ -94,7 +93,6 @@ if (!defined('ENVIRONMENT')) {
  *  Resolve the system path for increased reliability
  * ---------------------------------------------------------------
  */
-
 	// Set the current directory correctly for CLI requests
 	if (defined('STDIN'))
 	{

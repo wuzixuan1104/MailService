@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -397,7 +398,7 @@ if ( ! is_php('5.4'))
  *  or the loader class can be called via the URI, nor can
  *  controller methods that begin with an underscore.
  */
-
+	
 	$e404 = FALSE;
 	$class = ucfirst($RTR->class);
 	$method = $RTR->method;
@@ -443,7 +444,6 @@ if ( ! is_php('5.4'))
 			}
 		}
 	}
-
 	if ($e404)
 	{
 		if ( ! empty($RTR->routes['404_override']))
