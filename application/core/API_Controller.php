@@ -11,12 +11,11 @@ class API_Controller extends CI_Controller
     public $errors      = [];
     public $data        = false;
     public $serviceId   = 'SYS_MAIL';
-    public $token_auth  = true;
     public $token       = null;
     public $getParms    = [];
     public $postParms   = [];
 
-    public function __construct()
+    public function __construct($checkAuth = true)
     {
         parent::__construct();
 
@@ -46,7 +45,7 @@ class API_Controller extends CI_Controller
         
         $this->token     = isset($this->getParms['token']) ? $this->getParms['token'] : (isset($this->postParms['token']) ? $this->postParms['token'] : '');
         
-        if (!$this->authService->checkToken($this->token) && $this->token_auth) {
+        if ($checkAuth && !$this->authService->checkToken($this->token)) {
             $this->output(HTTP_UNAUTHORIZED, false, ["Unauthorized, please get access token first"]);
             exit();
         }
@@ -77,7 +76,8 @@ class API_Controller extends CI_Controller
             '60.248.26.145/32',
             '172.104.83.167/32',
             '139.162.96.140/32',
-            '60.250.128.229',
+            '127.0.0.1/1',
+            // '60.250.128.229',
         ];
 
         if (isset($_SERVER["REMOTE_ADDR"]) && $ip = $_SERVER["REMOTE_ADDR"]) {

@@ -522,4 +522,9 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-
+$config['loading-cores'] = [
+    'load-my-cores' =>  true,
+    'my-cores'      =>  [
+        'API_Controller',
+    ],
+];

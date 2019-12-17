@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CodeIgniter
  *
@@ -168,6 +167,7 @@ if ( ! is_php('5.4'))
  */
 	if ($composer_autoload = config_item('composer_autoload'))
 	{
+
 		if ($composer_autoload === TRUE)
 		{
 			file_exists(APPPATH.'vendor/autoload.php')
@@ -527,9 +527,8 @@ if ( ! is_php('5.4'))
  */
 	// Mark a start point so we can benchmark the controller
 	$BM->mark('controller_execution_time_( '.$class.' / '.$method.' )_start');
-
+	
 	$CI = new $class();
-
 /*
  * ------------------------------------------------------
  *  Is there a "post_controller_constructor" hook?

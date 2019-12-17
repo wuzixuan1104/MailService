@@ -4,8 +4,7 @@ class Auth extends API_Controller
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->token_auth = false;
+        parent::__construct(false);
     }
 
     public function doRest($method, $param, $getParms, $postParms)

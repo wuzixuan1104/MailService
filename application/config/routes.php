@@ -1,5 +1,4 @@
 <?php
-
 $route['default_controller'] = 'api/auth';
 
 $route['404_override'] = '';

@@ -1,5 +1,5 @@
 <?php
-namespace Services\Api;
+namespace Api;
 
 use Services\BaseService;
 
