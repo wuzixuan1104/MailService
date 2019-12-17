@@ -1,0 +1,4 @@
+!.gitignore
+sftp-config*
+
+*.php
