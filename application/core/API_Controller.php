@@ -1,5 +1,5 @@
 <?php
-use Api\AuthService;
+use Services\AuthService;
 use Services\Rest;
 use Utilities\CacheService;
 
