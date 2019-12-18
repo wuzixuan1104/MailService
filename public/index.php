@@ -17,7 +17,7 @@ if (!defined('ENVIRONMENT')) {
 	if (!file_exists(dirname(__FILE__) . '/env.php'))
 		exit('請配置環境 public_html/env.php 檔案，規格請參照 public_html/env.example.php');
 	
-	include(dirname(__FILE__) . '/env.php');
+	require_once (dirname(__FILE__) . '/env.php');
 } 
 
 /*
@@ -214,4 +214,4 @@ if (!defined('ENVIRONMENT')) {
  *
  * And away we go...
  */
-require_once BASEPATH.'core/CodeIgniter.php';
+require_once BASEPATH . 'core/CodeIgniter.php';

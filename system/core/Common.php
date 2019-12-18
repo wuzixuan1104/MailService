@@ -848,6 +848,12 @@ if ( ! function_exists('function_usable'))
 	}
 }
 
+if (!function_exists('cleanStr')) {
+  function cleanStr($str) {
+    return (preg_match('/[^\x00-\x7F]/S', $str) === 0) === false ? !MB_ENABLED ? ICONV_ENABLED ? @iconv('UTF-8', 'UTF-8//IGNORE', $str) : $str : mb_convert_encoding($str, 'UTF-8', 'UTF-8') : $str;
+  }
+}
+
 if (!function_exists('config')) {
   function config() {
     static $files, $keys;

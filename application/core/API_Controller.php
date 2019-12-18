@@ -11,17 +11,12 @@ abstract class API_Controller extends CI_Controller
     public $errors      = [];
     public $data        = false;
     public $serviceId   = 'SYS_MAIL';
-    public $token       = null;
-    public $getParms    = [];
-    public $postParms   = [];
 
     public function __construct($checkAuth = true) {
         parent::__construct();
 
-        if (!$this->checkSource()) {
+        if (!$this->checkSource())
             $this->output(HTTP_FORBIDDEN, false, ["Forbidden - ".$_SERVER['REMOTE_ADDR']]);
-            exit();
-        }
 
         $this->cacheService = new CacheService();
         $this->cacheService->init($this);
@@ -35,24 +30,19 @@ abstract class API_Controller extends CI_Controller
             ]
         );
 
-        $this->getParms  = $this->input->get();
-        $this->postParms = $this->parseParams($this->input->post(NULL, TRUE));
-        
-        $this->token     = isset($this->getParms['token']) ? $this->getParms['token'] : (isset($this->postParms['token']) ? $this->postParms['token'] : '');
-        
-        if ($checkAuth && !$this->authService->checkToken($this->token)) {
+        if ($checkAuth && !$this->authService->checkToken(Input::requestHeader('token')))
             $this->output(HTTP_UNAUTHORIZED, false, ["Unauthorized, please get access token first"]);
-            exit();
-        }
     }
 
-    private function _cidr_match($ip, $range) {
-        list($subnet, $bits) = explode('/', $range);
-        $ip                  = ip2long($ip);
-        $subnet              = ip2long($subnet);
-        $mask                = -1 << (32 - $bits);
-        $subnet             &= $mask;
-        return ($ip & $mask) == $subnet;
+    abstract public function doRest($method, $param);
+
+    public function rest($method, $param) {
+        $return = $this->doRest($method, $param);
+    }
+
+    public function index($param = '') {
+        $method = $this->getRQMethod();
+        $this->rest($method, $param);
     }
 
     protected function checkSource() {
@@ -83,30 +73,12 @@ abstract class API_Controller extends CI_Controller
         return false;
     }
 
-    public function parseParams($standardPost) {
-        $postParms  = false;
-        $standInput = file_get_contents("php://input");
-
-        if ($standInput && $standInput != '') {
-            if (!$postParms = json_decode($standInput, true)) {
-                parse_str($standInput, $postParms); // method = PATCH的情況
-                if (empty($postParms))
-                    $postParms = false;
-            }
-        }
-
-        return $postParms ? $this->security->xss_clean($postParms) : $standardPost;
+    private function _cidr_match($ip, $range) {
+        list($subnet, $bits) = explode('/', $range);
+        $ip                  = ip2long($ip);
+        $subnet              = ip2long($subnet);
+        $mask                = -1 << (32 - $bits);
+        $subnet             &= $mask;
+        return ($ip & $mask) == $subnet;
     }
-
-    public function index($param = '') {
-        $method = $this->getRQMethod();
-        $this->rest($method, $param);
-    }
-
-    abstract public function doRest($method, $param, $getParms, $postParms);
-
-    public function rest($method, $param) {
-        $return = $this->doRest($method, $param, $this->getParms, $this->postParms);
-    }
-
 }

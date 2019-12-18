@@ -1,9 +1,9 @@
 <?php
 
-class Auth extends API_Controller
+class Confirm extends API_Controller
 {
     public function __construct() {
-        parent::__construct(false); //false 不需檢查是否有Token
+        parent::__construct();
     }
 
     public function doRest($method, $param) {

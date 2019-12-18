@@ -80,6 +80,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	require_once(BASEPATH.'core/Common.php');
 
 
+/*	加入自定義的類別
+ *
+ */
+	require_once BASEPATH . 'core/MYInput.php';
+
+	require_once BASEPATH . 'core/MYSecurity.php';
+
 /*
  * ------------------------------------------------------
  * Security procedures

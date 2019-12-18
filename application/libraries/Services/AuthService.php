@@ -20,11 +20,11 @@ class AuthService extends BaseService
         return implode("-", str_split($token, $hyphenate_len));
     }
 
-    public function getToken($param = '')
+    public function getToken()
     {
         $ttl    = 86400;
         $expire = time() + $ttl;
-        $token  = $this->genToken($param);
+        $token  = $this->genToken();
         $key    = $this->serviceId . ':API_TOKEN:' . $token;
         if ($this->cacheService->save($key, '1', $ttl)) {
             return [
