@@ -4,7 +4,7 @@ class Auth extends API_Controller
 {
     public function __construct()
     {
-        parent::__construct(false);
+        parent::__construct(false); //false 不需檢查是否有Token
     }
 
     public function doRest($method, $param, $getParms, $postParms)
@@ -18,16 +18,12 @@ class Auth extends API_Controller
                 $type = $getParms['type'] ?? '';
                 $data = $this->authService->getToken($type);
                 break;
-
-            case 'POST':
-            case 'PUT':
-            case 'DELETE':
             default:
                 $retState = HTTP_METHOD_NOT_ALLOWED;
                 break;
         }
 
-        return ['retState' => $retState, 'data' => $data, 'errors' => $errors];
+        $this->output($retState, $data, $errors);
     }
 
 }

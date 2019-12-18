@@ -3,7 +3,7 @@ use Services\AuthService;
 use Services\Rest;
 use Utilities\CacheService;
 
-class API_Controller extends CI_Controller
+abstract class API_Controller extends CI_Controller
 {
     use Rest;
 
@@ -15,16 +15,11 @@ class API_Controller extends CI_Controller
     public $getParms    = [];
     public $postParms   = [];
 
-    public function __construct($checkAuth = true)
-    {
+    public function __construct($checkAuth = true) {
         parent::__construct();
 
         if (!$this->checkSource()) {
             $this->output(HTTP_FORBIDDEN, false, ["Forbidden - ".$_SERVER['REMOTE_ADDR']]);
-            exit();
-        }
-        if (ENVIRONMENT == 'production' && $_SERVER['HTTP_HOST'] == 'hcms.tripresso.com.tw' && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on")) {
-            $this->output(HTTP_BAD_REQUEST, false, ["please use HTTPS protocol on hcms api request"]);
             exit();
         }
 
@@ -51,18 +46,16 @@ class API_Controller extends CI_Controller
         }
     }
 
-    private function _cidr_match($ip, $range)
-    {
+    private function _cidr_match($ip, $range) {
         list($subnet, $bits) = explode('/', $range);
         $ip                  = ip2long($ip);
         $subnet              = ip2long($subnet);
         $mask                = -1 << (32 - $bits);
-        $subnet &= $mask; # nb: in case the supplied subnet wasn't correctly aligned
+        $subnet             &= $mask;
         return ($ip & $mask) == $subnet;
     }
 
-    protected function checkSource()
-    {
+    protected function checkSource() {
         $ip_filter = [
             '192.162.1.0/24',
             '192.168.1.0/16',
@@ -80,48 +73,40 @@ class API_Controller extends CI_Controller
             // '60.250.128.229',
         ];
 
-        if (isset($_SERVER["REMOTE_ADDR"]) && $ip = $_SERVER["REMOTE_ADDR"]) {
-            foreach ($ip_filter as $range) {
-                if ($this->_cidr_match($ip, $range)) {
-                    return true;
-                }
-            }
-        }
+        if (!(isset($_SERVER["REMOTE_ADDR"]) && $ip = $_SERVER["REMOTE_ADDR"])) 
+            return false;
+
+        foreach ($ip_filter as $range)
+            if ($this->_cidr_match($ip, $range))
+                return true;
 
         return false;
     }
 
-    public function parseParams($standardPost)
-    {
+    public function parseParams($standardPost) {
         $postParms  = false;
         $standInput = file_get_contents("php://input");
+
         if ($standInput && $standInput != '') {
             if (!$postParms = json_decode($standInput, true)) {
                 parse_str($standInput, $postParms); // method = PATCH的情況
-                if (empty($postParms)) {
+                if (empty($postParms))
                     $postParms = false;
-                }
             }
         }
 
         return $postParms ? $this->security->xss_clean($postParms) : $standardPost;
     }
 
-    public function index($param = '')
-    {
-        $method = $this->input->server('REQUEST_METHOD');
+    public function index($param = '') {
+        $method = $this->getRQMethod();
         $this->rest($method, $param);
     }
 
-    public function doRest($method, $param, $getParms, $postParms)
-    {
-        exit("you need override this function [doRest]!");
-    }
+    abstract public function doRest($method, $param, $getParms, $postParms);
 
-    public function rest($method, $param)
-    {
+    public function rest($method, $param) {
         $return = $this->doRest($method, $param, $this->getParms, $this->postParms);
-        $this->output($return['retState'], $return['data'], $return['errors']);
     }
 
 }

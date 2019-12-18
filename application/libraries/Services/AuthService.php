@@ -26,7 +26,6 @@ class AuthService extends BaseService
         $expire = time() + $ttl;
         $token  = $this->genToken($param);
         $key    = $this->serviceId . ':API_TOKEN:' . $token;
-
         if ($this->cacheService->save($key, '1', $ttl)) {
             return [
                 'token'  => $token,
