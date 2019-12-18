@@ -46,8 +46,7 @@
 
 | 樣板 | key | url |
 | -------- | -------- | -------- |
-| 飯店訂單確認信  |  ebs-acer-hotel    |  mail/order/confirm    |
-
+| 飯店訂單確認信  |  confirm@ebs-acer-hotel    |  api/mail    |
 
 
 

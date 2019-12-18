@@ -296,7 +296,6 @@ if ( ! is_php('5.4'))
 	require_once(BASEPATH.'core/compat/hash.php');
 	require_once(BASEPATH.'core/compat/password.php');
 	require_once(BASEPATH.'core/compat/standard.php');
-
 /*
  * ------------------------------------------------------
  *  Instantiate the UTF-8 class
@@ -431,6 +430,7 @@ if ( ! is_php('5.4'))
 
 		if ( ! class_exists($class, FALSE) OR $method[0] === '_' OR method_exists('CI_Controller', $method))
 		{
+
 
 			$e404 = TRUE;
 		}

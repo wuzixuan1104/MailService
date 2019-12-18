@@ -4,7 +4,7 @@ use Api\Factory\Validator;
 use Api\Structure\RequestInterface;
 
 class Hotel {
-    //注意：function名必須與router class相同
+    //注意：function 名必須與 router 結尾相同
     public function confirm($params = []) {
         return new HotelConfirm($params);
     }

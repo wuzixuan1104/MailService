@@ -1,9 +1,10 @@
 <?php
 use Api\SendMail;
 
-class Mail_Controller extends API_Controller
+abstract class Mail_Controller extends API_Controller
 {
     public $factoryApi      = null;
+    public $tplType         = null;
     public $sendMailService = null;
     public $return          = [];
 
@@ -27,7 +28,8 @@ class Mail_Controller extends API_Controller
     }
 
     protected function isKeyExist($key) {
-        if (!$path = array_map('trim', explode('-', $key)))
+        $this->tplType = strtok($key, '@');
+        if (!$path = array_map('trim', explode('-', str_replace($this->tplType . '@', '', $key))))
             return false;
 
         $file = array_pop($path);
@@ -46,6 +48,7 @@ class Mail_Controller extends API_Controller
 
     public function index() {
         $data = $this->doRest();
+
         if (is_object($data)) {
             if ($prepare = $this->sendMailService->prepare($data)) {
                 if (!$data = $prepare->send(Input::post('emails'))) {
@@ -66,39 +69,5 @@ class Mail_Controller extends API_Controller
         $this->output(HTTP_OK, $data, '');
     }
 
-    public function doRest() {
-        $factory  = $this->factoryApi;
-        $obj = new $factory();
 
-        $classFunc = $this->router->class;
-        
-        if (!method_exists($obj, $classFunc)) {
-            $this->output(
-                HTTP_BAD_REQUEST, false, 
-                $confirmObj->rqParams['ValidatorError']
-            );
-        }
-        switch (Input::method()) {
-            case 'POST':
-                //依照key取得對應工廠的參數和版型
-                $obj = $obj->$classFunc(Input::post());
-                if (isset($obj->rqParams['ValidatorError'])) {
-                    $this->output(
-                        HTTP_BAD_REQUEST, false, 
-                        $obj->rqParams['ValidatorError']
-                    );
-                }
-                
-                return $obj;
-                break;
-            case 'GET':
-                //方便取得參數格式
-                return $obj->$classFunc()->requiredField();
-                break;
-
-            default:
-                $retState = HTTP_METHOD_NOT_ALLOWED;
-                break;
-        }
-    }
 }
