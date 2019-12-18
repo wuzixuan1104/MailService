@@ -1,7 +1,7 @@
 <?php
 use Api\SendMail;
 
-abstract class Mail_Controller extends API_Controller
+class Mail_Controller extends API_Controller
 {
     public $factoryApi      = null;
     public $sendMailService = null;
@@ -26,9 +26,26 @@ abstract class Mail_Controller extends API_Controller
         $this->return = ['retState' => HTTP_OK, 'data' => false, 'errors' => []];
     }
 
+    protected function isKeyExist($key) {
+        if (!$path = array_map('trim', explode('-', $key)))
+            return false;
+
+        $file = array_pop($path);
+        array_push($path, ucfirst($file));
+
+        $path = 'Api' . DIRECTORY_SEPARATOR . 'Factory' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $path);
+        $factoryFile = PATH_LIB . $path . '.php';
+        if (!file_exists($factoryFile))
+            return false;
+
+        include_once($factoryFile);
+
+        $this->factoryApi = str_replace('/', '\\', $path);
+        return true;
+    }
+
     public function index() {
         $data = $this->doRest();
-
         if (is_object($data)) {
             if ($prepare = $this->sendMailService->prepare($data)) {
                 if (!$data = $prepare->send(Input::post('emails'))) {
@@ -49,21 +66,39 @@ abstract class Mail_Controller extends API_Controller
         $this->output(HTTP_OK, $data, '');
     }
 
-    protected function isKeyExist($key) {
-        if (!$path = array_map('trim', explode('-', $key)))
-            return false;
+    public function doRest() {
+        $factory  = $this->factoryApi;
+        $obj = new $factory();
 
-        $file = array_pop($path);
-        array_push($path, ucfirst($file));
+        $classFunc = $this->router->class;
+        
+        if (!method_exists($obj, $classFunc)) {
+            $this->output(
+                HTTP_BAD_REQUEST, false, 
+                $confirmObj->rqParams['ValidatorError']
+            );
+        }
+        switch (Input::method()) {
+            case 'POST':
+                //依照key取得對應工廠的參數和版型
+                $obj = $obj->$classFunc(Input::post());
+                if (isset($obj->rqParams['ValidatorError'])) {
+                    $this->output(
+                        HTTP_BAD_REQUEST, false, 
+                        $obj->rqParams['ValidatorError']
+                    );
+                }
+                
+                return $obj;
+                break;
+            case 'GET':
+                //方便取得參數格式
+                return $obj->$classFunc()->requiredField();
+                break;
 
-        $path = 'Api' . DIRECTORY_SEPARATOR . 'Factory' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $path);
-        $factoryFile = PATH_LIB . $path . '.php';
-        if (!file_exists($factoryFile))
-            return false;
-
-        include_once($factoryFile);
-
-        $this->factoryApi = str_replace('/', '\\', $path);
-        return true;
+            default:
+                $retState = HTTP_METHOD_NOT_ALLOWED;
+                break;
+        }
     }
 }

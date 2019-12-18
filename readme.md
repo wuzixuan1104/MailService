@@ -10,6 +10,9 @@
 
 > 舉個例子吧！
 
++ 先取得 accessToken
+    + url: `/api/auth`
+     
 + **POST** 呼叫飯店確認信
     + `emails` 都為必帶值，才知道寄送給誰，多個逗號分隔
     
@@ -43,4 +46,13 @@
 
 | 樣板 | key | url |
 | -------- | -------- | -------- |
-| 飯店訂單確認信  |  ebs-acer-hotel    |  api/order/confirm    |
+| 飯店訂單確認信  |  ebs-acer-hotel    |  mail/order/confirm    |
+
+
+
+
+
+
+
+
+
