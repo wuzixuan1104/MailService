@@ -6,14 +6,15 @@ class Confirm extends API_Controller
         parent::__construct();
     }
 
-    public function doRest($method, $param) {
+    public function doRest() {
         $errors   = [];
         $data     = false;
         $retState = HTTP_OK;
 
-        switch ($method) {
-            case 'GET':
-                $data = $this->authService->getToken();
+        switch (Input::method()) {
+            case 'POST':
+                $data = $this->post();
+                // $data = $this->authService->getToken();
                 break;
             default:
                 $retState = HTTP_METHOD_NOT_ALLOWED;
@@ -21,6 +22,10 @@ class Confirm extends API_Controller
         }
 
         $this->output($retState, $data, $errors);
+    }
+
+    private function post() {
+
     }
 
 }

@@ -6,12 +6,12 @@ class Auth extends API_Controller
         parent::__construct(false); //false 不需檢查是否有Token
     }
 
-    public function doRest($method, $param) {
+    public function doRest() {
         $errors   = [];
         $data     = false;
         $retState = HTTP_OK;
 
-        switch ($method) {
+        switch (Input::method()) {
             case 'GET':
                 $data = $this->authService->getToken();
                 break;

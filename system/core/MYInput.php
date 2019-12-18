@@ -5,6 +5,7 @@ class Input {
   private static $headers = null;
   private static $inputStream = null;
   private static $hasSanitizeGlobals = null;
+  private static $method = null;
 
   private static function parsePut($putData) {
     $rawData = '';
@@ -380,5 +381,16 @@ class Input {
       return self::getUploadFile($index, 'one');
 
     return self::getUploadFile($matches);
+  }
+
+  public static function method() {
+    if (self::$method !== null)
+        return self::$method;
+
+    if (!(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD']))
+        return false;
+
+    self::$method = $_SERVER['REQUEST_METHOD'];
+    return self::$method;
   }
 }

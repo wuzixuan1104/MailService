@@ -28,8 +28,4 @@ trait Rest
 
         die (json_encode($res));
     }
-
-    protected function getRQMethod() {
-        return $this->input->server('REQUEST_METHOD');
-    }
 }
