@@ -10,7 +10,6 @@ abstract class API_Controller extends CI_Controller
     public $errorStatus = HTTP_OK;
     public $errors      = [];
     public $serviceId   = 'SYS_MAIL';
-    public $factoryPath         = null;
 
     public function __construct($checkAuth = true) {
         parent::__construct();
@@ -30,16 +29,10 @@ abstract class API_Controller extends CI_Controller
             ]
         );
 
-        if ($checkAuth) {
+
+        if ($checkAuth)
             if (!$this->authService->checkToken(Input::requestHeader('token')))
                 $this->output(HTTP_UNAUTHORIZED, false, ['Unauthorized, please get access token first']);
-
-            if (!$key = Input::post('key'))
-                $this->output(HTTP_NOT_FOUND, false, ['missing 1 params named "key", ex: ebs-acer-hotel or b2c-group']);
-
-            if (!$this->factoryPath = $this->isKeyExist($key))
-                $this->output(HTTP_NOT_FOUND, false, ['params "key" is not allowed']);
-        }
     }
 
     abstract public function doRest();
@@ -50,23 +43,6 @@ abstract class API_Controller extends CI_Controller
 
     public function index() {
         $this->rest();
-    }
-
-    protected function isKeyExist($key) {
-        if (!$path = array_map('trim', explode('-', $key)))
-            return false;
-
-        $file = array_pop($path);
-        array_push($path, ucfirst($file));
-
-        $path = implode(DIRECTORY_SEPARATOR, $path) . '.php';
-        if (!file_exists(PATH_LIB . 'Api' . DIRECTORY_SEPARATOR . 'Factory' . DIRECTORY_SEPARATOR . $path))
-            return false;
-
-        //load factory file
-        include_once($path);
-
-        return $path;
     }
 
     protected function checkSource() {

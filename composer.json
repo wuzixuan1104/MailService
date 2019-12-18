@@ -1,6 +1,7 @@
 {
 	"require": {
-		"php": ">=5.3.7"
+		"php": ">=5.3.7",
+		"phpmailer/phpmailer": "^5.2"
 	},
 	"autoload": {
 		"psr-4": {

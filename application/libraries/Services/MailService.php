@@ -19,7 +19,7 @@ class MailService extends PHPMailer {
     public function __construct($username, $password, $fromName) {
         parent::__construct();
 
-        $config = config('mail', 'default');
+        $config = config('mailSecret', 'default');
         if (isset($config['host'], $config['port'], $config['charset'], $config['encoding'], $config['secure']))
             return false;
 
