@@ -1,6 +1,6 @@
 <?php
 use Api\SendMail;
-// use Utilities\LineNotifyService;
+use Utilities\LineNotifyService;
 
 abstract class Mail_Controller extends API_Controller
 {
@@ -59,14 +59,14 @@ abstract class Mail_Controller extends API_Controller
 
             if ($prepare = $this->sendMailService->prepare($data)) {
                 if (!$data = $prepare->send(Input::post('emails'))) {
-                    \Log::error('[Fail] send mail', $data, Input::post());
+                    \Log::error('信件發送錯誤', $data, Input::post());
 
-                    // $msg = "[Fail] " . (ENVIRONMENT != 'production' ? '測試站 - ' : '') . "send mail\r\n$params" . json_encode(Input::post());
+                    $msg = "[ERROR] " . (ENVIRONMENT != 'production' ? '測試站 - ' : '') . "發送信件錯誤\r\n\r\n" . json_encode(Input::post()) . "\r\n\r\n日期時間：" . date('Y-m-d H:i:s');
                     
-                    // @LineNotifyService::sendTo(
-                    //     ['message' => $msg], 
-                    //     config('api', 'lineNotify', 'token'), 'mailChatroom'
-                    // );
+                    @LineNotifyService::sendTo(
+                        ['message' => $msg], 
+                        config('api', 'lineNotify', 'token'), 'mailChatroom'
+                    );
                     
                     $this->output( HTTP_INTERNAL_SERVER_ERROR, false, '[Fail] send mail!');
                 } 

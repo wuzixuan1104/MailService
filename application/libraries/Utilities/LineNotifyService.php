@@ -1,5 +1,5 @@
 <?php
-namespace Service\Utilities;
+namespace Utilities;
 
 class LineNotifyService
 {
