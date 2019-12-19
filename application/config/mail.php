@@ -4,11 +4,23 @@ $config['ebs'] = [
     'topic' => 'Tripresso EBS',
     'acer' => [
         'hotel' => [
-            'subject' => 'Acer',
-            'confirm' => [
-                'title'  => '飯店訂單確認',
-                'view'   => 'edm/order/confirm/H_v1',
+            'subject' => 'Acer 飯店',
+            'order' => [
+                'create'  => [
+                    'title'  => '訂單成立',
+                    'view'   => 'edm/hotel/order/confirm/V1',
+                ],
+                'confirm' => [
+                    'title'  => '訂單確認',
+                    'view'   => 'edm/hotel/order/confirm/V1',
+                ],
             ],
+            'apply'   => [
+                'confirm' => [
+                    'title'  => '團員申請確認',
+                    'view'   => 'edm/hotel/apply/confirm/Member_v1',
+                ]
+            ]
         ] 
     ]
 ];
@@ -19,7 +31,7 @@ $config['cts'] = [
         'subject' => '差旅',
         'confirm' => [
             'title'  => '飯店訂單確認',
-            'view'   => 'edm/order/confirm/H_v1',
+            'view'   => 'edm/hotel/order/confirm/V1',
         ],
     ] 
 ];

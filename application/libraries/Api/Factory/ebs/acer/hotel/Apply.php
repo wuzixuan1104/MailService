@@ -1,26 +1,26 @@
 <?php
-namespace Api\Factory\ebs\acer;
+namespace Api\Factory\ebs\acer\hotel;
 use Api\Structure\MailInterface;
 use Api\Template\TplParamsResponse;
 
-class Hotel {
+class Apply {
     public function confirm($params = []) {
-        return new HotelConfirm($params);
+        return new Confirm($params);
     }
 }
 
-class HotelConfirm extends TplParamsResponse implements MailInterface {
+class Confirm extends TplParamsResponse implements MailInterface {
     public function __construct($params) {
         parent::__construct($this->getView(), $params);
     }
 
     public function getView() {
-        return config('mail', 'ebs', 'acer', 'hotel', 'confirm', 'view');
+        return config('mail', 'ebs', 'acer', 'hotel', 'apply', 'confirm', 'view');
     }
-    
+
     public function getSubject() {
         return config('mail', 'ebs', 'acer', 'hotel', 'subject') . ' - ' . 
-               config('mail', 'ebs', 'acer', 'hotel', 'confirm', 'title');
+               config('mail', 'ebs', 'acer', 'hotel', 'apply', 'confirm', 'title');
     }
 
     public function getMailSecret() {

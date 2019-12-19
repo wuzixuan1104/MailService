@@ -1,15 +1,15 @@
 <?php
-namespace Api\Factory\cts;
+namespace Api\Factory\cts\hotel;
 use Api\Structure\MailInterface;
 use Api\Template\TplParamsResponse;
 
-class Hotel {
+class Order {
     public function confirm($params = []) {
-        return new HotelConfirm($params);
+        return new Confirm($params);
     }
 }
 
-class HotelConfirm extends TplParamsResponse implements MailInterface {
+class Confirm extends TplParamsResponse implements MailInterface {
     public function __construct($params) {
         parent::__construct($this->getView(), $params);
     }

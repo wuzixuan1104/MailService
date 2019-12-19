@@ -28,14 +28,19 @@ abstract class Mail_Controller extends API_Controller
     }
 
     protected function isKeyExist($key) {
-        $this->tplType = strtok($key, '@');
-        if (!$path = array_map('trim', explode('-', str_replace($this->tplType . '@', '', $key))))
+        $keys = explode('@', $key);
+        if (count($keys) != 2)
+            return false;
+
+        $this->tplType = end($keys);
+        if (!$path = array_map('trim', explode('-', str_replace('@' . $this->tplType, '', $key))))
             return false;
 
         $file = array_pop($path);
         array_push($path, ucfirst($file));
 
         $path = 'Api' . DIRECTORY_SEPARATOR . 'Factory' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $path);
+
         $factoryFile = PATH_LIB . $path . '.php';
         if (!file_exists($factoryFile))
             return false;

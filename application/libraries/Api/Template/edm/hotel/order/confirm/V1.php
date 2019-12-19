@@ -1,11 +1,11 @@
 <?php
-namespace Api\Template\edm\order\confirm;
+namespace Api\Template\edm\hotel\order\confirm;
 
 use Api\Template\Validator;
 use Api\Structure\TemplateInterface;
 
 
-class H_v1 implements TemplateInterface {
+class V1 implements TemplateInterface {
     public $rqParams;
 
     public function __construct($params) {
