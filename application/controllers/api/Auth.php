@@ -6,7 +6,7 @@ class Auth extends API_Controller
         parent::__construct(false); //false 不需檢查是否有Token
     }
 
-    public function doRest($param) {
+    public function doRest() {
         $errors   = [];
         $data     = false;
         $retState = HTTP_OK;

@@ -1,5 +1,5 @@
 <?php
-namespace Api\Factory;
+namespace Api\Template;
 
 /*  範例規格參照：
 

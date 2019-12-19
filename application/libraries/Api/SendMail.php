@@ -25,7 +25,7 @@ class SendMail extends BaseService {
             return false;
 
 
-        $this->mailBody = $this->CI->load->view($factory->getView(), $factory->getViewParams(), true);
+        $this->mailBody = $this->CI->load->view($factory->getView(), $factory->getRequiredParams(), true);
         if (!$this->mailBody || $this->mailBody == '')
             return false;
 

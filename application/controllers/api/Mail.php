@@ -19,15 +19,17 @@ class Mail extends Mail_Controller
             case 'POST':
                 //依照key取得對應工廠的參數和版型
                 $obj = $obj->$classFunc(Input::post());
-
-                if (isset($obj->rqParams['ValidatorError']))
-                    $this->output(HTTP_BAD_REQUEST, false, $obj->rqParams['ValidatorError']);
+                
+                $rqParams = $obj->getRequiredParams();
+                if (isset($rqParams['ValidatorError'])) {
+                    $this->output(HTTP_BAD_REQUEST, false, $rqParams['ValidatorError']);
+                }
                 
                 return $obj;
                 break;
             case 'GET':
                 //方便取得參數格式
-                return $obj->$classFunc()->requiredField();
+                return $obj->$classFunc()->getRequiredField();
                 break;
 
             default:
