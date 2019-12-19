@@ -1,14 +1,15 @@
 <?php
 namespace Services;
+
 use \PHPMailer;
 use \SMTP;
 
 class MailService extends PHPMailer {
 
     public static function create($username = null, $password = null, $fromName = null) {
-        $username !== null || $username = config('mail', 'default', 'username');
-        $password !== null || $password = config('mail', 'default', 'password');
-        $fromName !== null || $fromName = config('mail', 'default', 'fromName');
+        $username !== null || $username = config('mailSecret', 'default', 'username');
+        $password !== null || $password = config('mailSecret', 'default', 'password');
+        $fromName !== null || $fromName = config('mailSecret', 'default', 'fromName');
 
         if (!$username || !$password)
             return false;
@@ -20,7 +21,8 @@ class MailService extends PHPMailer {
         parent::__construct();
 
         $config = config('mailSecret', 'default');
-        if (isset($config['host'], $config['port'], $config['charset'], $config['encoding'], $config['secure']))
+        
+        if (!isset($config['host'], $config['port'], $config['charset'], $config['encoding'], $config['secure']))
             return false;
 
         $this->isSMTP();
@@ -81,9 +83,6 @@ class MailService extends PHPMailer {
     }
 
     public function send() {
-        // if (in_array(ENVIRONMENT, ['production', 'testing']))
         return parent::send();
-
-        // preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $this->Body, $result);
     }
 }

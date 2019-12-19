@@ -14,9 +14,12 @@ class H_v1 implements TemplateInterface {
 
     public function requiredField() {
         return [
-            'orderCode' => 'String',
-            'status'    => 'String',
-            'userInfo'  => 'Array',
+            'orderCode' => 'String|max:100',
+            'status'    => 'String|max:10',
+            'userInfo'  => [
+                'name'  =>  'String|max:50',
+                'phone:optional' => 'String',
+            ],
         ];
     }
 

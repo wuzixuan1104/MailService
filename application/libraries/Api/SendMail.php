@@ -39,15 +39,18 @@ class SendMail extends BaseService {
 
     public function send($emails) {
         $emails  = array_map('trim', explode(',', $emails));
+
         $mailObj = MailService::create($this->username, $this->password, $this->fromName)
                     ->setSubject($this->subject)
                     ->setBody($this->mailBody);
 
+    
         foreach ($emails as $email)
             $mailObj->addTo($email);
         
         if ($mailObj)
             return $mailObj->send();
+
 
         return false;
     }
