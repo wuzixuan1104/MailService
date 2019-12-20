@@ -10,6 +10,7 @@ abstract class API_Controller extends CI_Controller
     public $errorStatus = HTTP_OK;
     public $errors      = [];
     public $serviceId   = 'SYS_MAIL';
+    public $ip          = '';
 
     public function __construct($checkAuth = true) {
         parent::__construct();
@@ -66,6 +67,8 @@ abstract class API_Controller extends CI_Controller
         if (!(isset($_SERVER["REMOTE_ADDR"]) && $ip = $_SERVER["REMOTE_ADDR"])) 
             return false;
 
+        $this->ip = $_SERVER["REMOTE_ADDR"];
+        
         foreach ($ip_filter as $range)
             if ($this->_cidr_match($ip, $range))
                 return true;

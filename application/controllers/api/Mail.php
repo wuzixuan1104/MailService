@@ -12,13 +12,19 @@ class Mail extends Mail_Controller
         
         $classFunc = $this->tplType;
         if (!method_exists($obj, $classFunc))
-            $this->output(HTTP_BAD_REQUEST, false, '[Fail] 找不到樣板');
+            $this->output(HTTP_BAD_REQUEST, false, "[Fail] 找不到 {$classFunc} 樣板！");
 
 
         switch (Input::method()) {
             case 'POST':
                 //依照key取得對應工廠的參數和版型
-                $obj = $obj->$classFunc(Input::post());
+                $posts = Input::post();
+
+                if (!(isset($posts['emails']) && $posts['emails']))
+                    $this->output(HTTP_BAD_REQUEST, false, 
+                        '[Fail] 參數缺少 "emails", 多個信箱請逗號隔開 ex:shari.wu@tripsaas.com, sun.kuo@tripsaas.com');
+
+                $obj = $obj->$classFunc($posts);
                 
                 $rqParams = $obj->getRequiredParams();
                 if (isset($rqParams['ValidatorError'])) {
