@@ -310,11 +310,10 @@ class Input {
     $news = [];
     $filterSize = true;
     $keys = array_keys($files);
-
+    
     foreach ($files['size'] as $i => $size) {
       if ($filterSize && $size <= 0)
         continue;
-
       isset($news[$i]) || $news[$i] = [];
 
       foreach ($files as $name => $file)
@@ -334,7 +333,7 @@ class Input {
     //       $news[$j][$key] = is_array ($files[$key]) ? $files[$key][$i] : $files[$key];
     //     $j++;
     //   }
-
+  
     return $news;
   }
 

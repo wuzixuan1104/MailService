@@ -47,6 +47,7 @@ abstract class API_Controller extends CI_Controller
     }
 
     protected function checkSource() {
+        //判斷ip白名單
         $ip_filter = [
             '192.162.1.0/24',
             '192.168.1.0/16',

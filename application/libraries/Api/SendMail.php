@@ -7,10 +7,15 @@ use \Services\BaseService;
 class SendMail extends BaseService {
     private $mailBody = '';
     public $username, $password, $fromName, $subject;
+    public $params = [];
+    public $files = [];
 
-    public function __construct() {
+    public function __construct($params, $files = []) {
         if (!isset($this->CI) || !$this->CI)
             $this->CI = &get_instance();
+
+        $this->params = $params;
+        $this->files  = $files;
     }
 
     public function prepare($factory) {
@@ -37,21 +42,41 @@ class SendMail extends BaseService {
         return $this;
     }
 
-    public function send($emails) {
-        $emails  = array_map('trim', explode(',', $emails));
-
+    public function send() {
         $mailObj = MailService::create($this->username, $this->password, $this->fromName)
                     ->setSubject($this->subject)
                     ->setBody($this->mailBody);
 
-    
-        foreach ($emails as $email)
-            $mailObj->addTo($email);
+        //寄送方式
+        $type = 'addTo';
+        if (isset($this->params['type']) && in_array(trim($this->params['type']), ['bcc', 'cc'])) {
+            $type = 'add' . trim(strtoupper($this->params['type']));
+        }
+
+        foreach ($this->params['receivers'] as $receiver) {
+            if (!isset($receiver['email']))
+                continue;
+            $mailObj->$type($receiver['email'], $receiver['name'] ?? '');
+        }
         
-        if ($mailObj)
-            return $mailObj->send();
 
+        //夾帶檔案
+        //1. 本地檔案
+        if (isset($this->files['attachments']) && $this->files['attachments']) {
+            foreach ($this->files['attachments'] as $attach) {
+                if ($attach['error'] == UPLOAD_ERR_OK)
+                    $mailObj->addFile($attach['tmp_name'], $attach['name']);
+            }
+        }
+        //2. 遠端檔案
+        if (isset($this->params['attachmentUrls']) && $this->params['attachmentUrls']) {
+            foreach ($this->params['attachmentUrls'] as $attach) {
+                if (!isset($attach['url']) || !$attach['url'])
+                    continue;
+                $mailObj->addFileUrl($attach['url'], $attach['name'] ?? '');
+            }
+        }
 
-        return false;
+        return $mailObj->send();
     }
 }

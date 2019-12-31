@@ -19,6 +19,10 @@ $config['ebs'] = [
                 'confirm' => [
                     'title'  => '團員申請確認',
                     'view'   => 'edm/hotel/apply/confirm/Member_v1',
+                ],
+                'review' => [
+                    'title' => '審核測試',
+                    'view'  =>  'edm/hotel/order/confirm/V1',
                 ]
             ]
         ] 

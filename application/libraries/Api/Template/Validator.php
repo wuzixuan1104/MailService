@@ -77,7 +77,7 @@ class Validator {
         $pos = strpos($k, 'optional');
         if (!$pos) { //is must
             if (!array_key_exists($k, $input)) {
-                self::$errorMsg = '[參數傳入錯誤] 缺少必填值 KEY: ' . $k;
+                self::$errorMsg = '[樣板參數傳入錯誤] 缺少必填值 KEY: ' . $k;
                 return '+1';
             }
             return $k;

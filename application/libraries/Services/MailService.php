@@ -67,6 +67,11 @@ class MailService extends PHPMailer {
         return $this;
     }
 
+    public function addFileUrl($url, $name = '') {
+        $this->addStringAttachment(file_get_contents($url), $name);
+        return $this;
+    }
+
     public function setSubject($subject) {
         $this->Subject = (ENVIRONMENT == 'production' ? '' : '測試站 - ') . $subject;
         return $this;

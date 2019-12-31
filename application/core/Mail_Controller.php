@@ -10,7 +10,7 @@ abstract class Mail_Controller extends API_Controller
     public $return          = [];
 
     public function __construct($checkAuth = true) {
-        parent::__construct();
+        parent::__construct($checkAuth);
 
         if (!$key = Input::requestHeader('key'))
             $this->output(
@@ -23,8 +23,9 @@ abstract class Mail_Controller extends API_Controller
                 HTTP_NOT_FOUND, false, 
                 '[Fail] 參數 "key" 錯誤！找不到該路徑'
             );
-    
-        $this->sendMailService = new SendMail();
+        
+      
+        $this->sendMailService = new SendMail(Input::post(), Input::file());
         $this->return = ['retState' => HTTP_OK, 'data' => false, 'errors' => []];
     }
 
@@ -58,9 +59,10 @@ abstract class Mail_Controller extends API_Controller
 
         if (is_object($data)) {
             $posts = Input::post();
+            $files = Input::file();
 
             if ($prepare = $this->sendMailService->prepare($data)) {
-                if (!$data = $prepare->send($posts['emails'])) {
+                if (!$data = $prepare->send()) {
                     \Log::error('信件發送錯誤', $data, $posts);
 
                     $msg = "[ERROR] " . (ENVIRONMENT != 'production' ? '測試站 - ' : '') . "發送信件失敗\r\n\r\n" . 
