@@ -24,7 +24,7 @@ class Mail extends Mail_Controller
                     $this->output(HTTP_BAD_REQUEST, false, 
                         '[Fail] 參數缺少 "receivers", 多個信箱請逗號隔開 ex:shari.wu@tripsaas.com, sun.kuo@tripsaas.com');
 
-                $obj = $obj->$classFunc($posts['params']);
+                $obj = $obj->$classFunc($posts['tplParams']);
                 
                 $rqParams = $obj->getRequiredParams();
                 if (isset($rqParams['ValidatorError'])) {
@@ -35,7 +35,10 @@ class Mail extends Mail_Controller
                 break;
             case 'GET':
                 //方便取得參數格式
-                return $this->formatRQField($obj->$classFunc()->getRequiredField());
+                return $this->_formatRQField(
+                            $obj->$classFunc()->getRequiredField(),
+                            $obj->$classFunc()->getSubject()
+                        );
                 break;
 
             default:
@@ -44,29 +47,41 @@ class Mail extends Mail_Controller
         }
     }
 
-    private function formatRQField($tplField) {
-        return [
-            'receivers' => [
-                [
-                    'email'          => 'String',
-                    'name:optional'  => 'String',
+    private function _formatRQField($tplField, $subject) {
+        preg_match_all('/(\{([a-zA-Z0-9]*)\})/', $subject, $matches);
+        
+        $subjectParams = [];
+        if (isset($matches[2]) && $matches[2]) {
+            foreach ($matches[2] as $match)
+                $match && $subjectParams[$match] = 'String';
+        }
+
+        return [    
+            'subject (display title)' => $subject,
+            'params (request format bellow)' => array_filter([ 
+                'receivers' => [
+                    [
+                        'email'          => 'String',
+                        'name:optional'  => 'String',
+                    ]
+                ],
+                'subjectParams:optional' => $subjectParams,
+                'tplParams' => $tplField,
+                'type:optional (Default: to)'  => 'Enum|item:cc,bcc,to',
+                'attachmentUrls:optional (POST)' => [
+                    [
+                        'url'           =>  'String',
+                        'name:optional' => 'String',
+                    ]
+                ],
+                'attachments:optional (FILE)'   => [
+                    'name'      => 'Array',
+                    'type'      => 'Array',
+                    'tmp_name'  => 'Array',
+                    'error'     => 'Array',
+                    'size'      => 'Array'
                 ]
-            ],
-            'params (Template)' => $tplField,
-            'type:optional (Default: to)'  => 'Enum|item:cc,bcc,to',
-            'attachmentUrls:optional (POST)' => [
-                [
-                    'url'           =>  'String',
-                    'name:optional' => 'String',
-                ]
-            ],
-            'attachments:optional (FILE)'   => [
-                'name'      => 'Array',
-                'type'      => 'Array',
-                'tmp_name'  => 'Array',
-                'error'     => 'Array',
-                'size'      => 'Array'
-            ]
+            ])
         ];
     }
 }

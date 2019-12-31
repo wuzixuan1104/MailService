@@ -7,7 +7,7 @@ $config['ebs'] = [
             'subject' => 'Acer 飯店',
             'order' => [
                 'create'  => [
-                    'title'  => '訂單成立',
+                    'title'  => '{title} 訂單成立 {orderCode}',
                     'view'   => 'edm/hotel/order/confirm/V1',
                 ],
                 'confirm' => [

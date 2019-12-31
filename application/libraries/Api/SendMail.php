@@ -29,7 +29,7 @@ class SendMail extends BaseService {
         if (!$view || $view == null)
             return false;
 
-
+        //內容套版
         $this->mailBody = $this->CI->load->view($factory->getView(), $factory->getRequiredParams(), true);
         if (!$this->mailBody || $this->mailBody == '')
             return false;
@@ -38,6 +38,12 @@ class SendMail extends BaseService {
         $this->password = $mailSecret['password'];
         $this->fromName = $mailSecret['fromName'];
         $this->subject  = $factory->getSubject();
+
+        //信件標題套版
+        if (isset($this->params['subjectParams']) && is_array($this->params['subjectParams']) && $this->params['subjectParams']) {
+            foreach ($this->params['subjectParams'] as $k => $v)
+                $this->subject = str_replace('{' . $k . '}', $v, $this->subject);
+        }
 
         return $this;
     }
@@ -59,8 +65,6 @@ class SendMail extends BaseService {
             $mailObj->$type($receiver['email'], $receiver['name'] ?? '');
         }
         
-
-        //夾帶檔案
         //1. 本地檔案
         if (isset($this->files['attachments']) && $this->files['attachments']) {
             foreach ($this->files['attachments'] as $attach) {
