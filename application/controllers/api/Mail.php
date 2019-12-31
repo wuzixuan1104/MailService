@@ -22,7 +22,7 @@ class Mail extends Mail_Controller
 
                 if (!(isset($posts['receivers']) && $posts['receivers']))
                     $this->output(HTTP_BAD_REQUEST, false, 
-                        '[Fail] 參數缺少 "receivers", 多個信箱請逗號隔開 ex:shari.wu@tripsaas.com, sun.kuo@tripsaas.com');
+                        '[Fail] 參數缺少 "receivers"');
 
                 $obj = $obj->$classFunc($posts['tplParams']);
                 
