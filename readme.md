@@ -1,6 +1,60 @@
 ## 發信系統
 
 ## API
+
+### 查看樣版參數格式
++ url: `\api\mail`
++ method: **GET**
++ header: 依照樣版格式填入 
+
+```
+{
+    "key": "ebs-acer-hotel-order@confirm" //Acer 飯店訂單確認信
+}
+```
+
++ 成功回應
+    
+```json=
+{
+    "subject (display title)": "Acer 飯店 - {title} 訂單成立 {orderCode}", //用大括號包起來的是可以變動的值
+    "params (request format bellow)": { //以下才是參數格式
+        "receivers": [ //發送人
+            {
+                "email": "String",
+                "name:optional": "String" //非必填
+            }
+        ],
+        "subjectParams:optional": { //標題參數
+            "title": "String",
+            "orderCode": "String"
+        },
+        "tplParams": { //樣板參數
+            "orderCode": "String|max:100",
+            "status": "String|max:10",
+            "userInfo": {
+                "name": "String|max:50",
+                "phone:optional": "String" //非必填
+            }
+        },
+        "type:optional (default: to)": "Enum|item:cc,bcc,to", //發送類型，預設 to
+        "attachmentUrls:optional (POST)": [ //夾帶檔案 - url 類型，使用 POST 方式
+            {
+                "url": "String",
+                "name:optional": "String" //非必填
+            }
+        ],
+        "attachments:optional (FILE)": {//夾帶檔案 - file 類型，使用 FILE 方式
+            "name": "Array",
+            "type": "Array",
+            "tmp_name": "Array",
+            "error": "Array",
+            "size": "Array"
+        }
+    }
+}
+```
+
 ### 寄送信件
 + url: `\api\mail`
 + method: **POST**
@@ -86,58 +140,7 @@ true
 }
 ```
 
-### 查看樣版參數格式
-+ url: `\api\mail`
-+ method: **GET**
-+ header: 依照樣版格式填入 
 
-```
-{
-    "key": "ebs-acer-hotel-order@confirm" //Acer 飯店訂單確認信
-}
-```
-
-+ 成功回應
-    
-```json=
-{
-    "subject (display title)": "Acer 飯店 - {title} 訂單成立 {orderCode}", //用大括號包起來的是可以變動的值
-    "params (request format bellow)": { //以下才是參數格式
-        "receivers": [ //發送人
-            {
-                "email": "String",
-                "name:optional": "String" //非必填
-            }
-        ],
-        "subjectParams:optional": { //標題參數
-            "title": "String",
-            "orderCode": "String"
-        },
-        "tplParams": { //樣板參數
-            "orderCode": "String|max:100",
-            "status": "String|max:10",
-            "userInfo": {
-                "name": "String|max:50",
-                "phone:optional": "String" //非必填
-            }
-        },
-        "type:optional (default: to)": "Enum|item:cc,bcc,to", //發送類型，預設 to
-        "attachmentUrls:optional (POST)": [ //夾帶檔案 - url 類型，使用 POST 方式
-            {
-                "url": "String",
-                "name:optional": "String" //非必填
-            }
-        ],
-        "attachments:optional (FILE)": {//夾帶檔案 - file 類型，使用 FILE 方式
-            "name": "Array",
-            "type": "Array",
-            "tmp_name": "Array",
-            "error": "Array",
-            "size": "Array"
-        }
-    }
-}
-```
 
 > KEY 總覽 (尚未發布正式版)
 
