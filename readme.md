@@ -351,7 +351,19 @@ class Review extends TplParamsResponse implements MailInterface {
 }
 ```
 
+
 ### Step5. 大功告成
++ 別忘了加入 LINE: **旅遊咖 - 發信系統通知**
+
+```
+【旅遊咖 - 發信系統】 [ERROR] 測試站 - 發送信件失敗 
+ 
+{"tplParams":{"orderCode":"H12345566","status":"Success","userInfo":{"name":"shari"},"title":"Shari \u798f\u5229\u7db2\u5e73\u53f0","hotelName":"\u7901\u6eaa\u8001\u723a\u5927\u9152\u5e97 ","leader":"\u5433\u59ff\u8431","place":"\u5b9c\u862d ,\u53f0\u7063","postNumber":"TGE876534"},"receivers":[{"name":"\u5433\u59ff\u8431"}],"type":"bcc","attachmentUrls":[{"url":"https:\/\/dszfbyatv8d2t.cloudfront.net\/linebot\/crm\/online\/LineFile\/file\/00\/00\/00\/05\/857142150_5d27ecce347d0.pdf","name":"pdf\u6e2c\u8a66"},{"url":"http:\/\/dimg04.c-ctrip.com\/images\/\/fd\/hotel\/g5\/M07\/CB\/E0\/CggYr1b5wBeADXlwAAQOq6f2OaM702_R_550_412.jpg","name":"\u5716\u7247\u6e2c\u8a66"}],"subjectParams":{"orderCode":"H123455"}} 
+ 
+請求 IP：127.0.0.1 
+樣板 Key：ebs-acer-hotel-apply@review 
+日期時間：2019-12-31 09:08:42
+```
 
 + 開始使用 API (詳細說明請參閱 API 說明文)
     
