@@ -1,60 +1,6 @@
 ## 發信系統
 
 ## API
-
-### 查看樣版參數格式
-+ url: `\api\mail`
-+ method: **GET**
-+ header: 依照樣版格式填入 
-
-```
-{
-    "key": "ebs-acer-hotel-order@confirm" //Acer 飯店訂單確認信
-}
-```
-
-+ 成功回應
-    
-```json=
-{
-    "subject (display title)": "Acer 飯店 - {title} 訂單成立 {orderCode}", //用大括號包起來的是可以變動的值
-    "params (request format bellow)": { //以下才是參數格式
-        "receivers": [ //發送人
-            {
-                "email": "String",
-                "name:optional": "String" //非必填
-            }
-        ],
-        "subjectParams:optional": { //標題參數
-            "title": "String",
-            "orderCode": "String"
-        },
-        "tplParams": { //樣板參數
-            "orderCode": "String|max:100",
-            "status": "String|max:10",
-            "userInfo": {
-                "name": "String|max:50",
-                "phone:optional": "String" //非必填
-            }
-        },
-        "type:optional (default: to)": "Enum|item:cc,bcc,to", //發送類型，預設 to
-        "attachmentUrls:optional (POST)": [ //夾帶檔案 - url 類型，使用 POST 方式
-            {
-                "url": "String",
-                "name:optional": "String" //非必填
-            }
-        ],
-        "attachments:optional (FILE)": {//夾帶檔案 - file 類型，使用 FILE 方式
-            "name": "Array",
-            "type": "Array",
-            "tmp_name": "Array",
-            "error": "Array",
-            "size": "Array"
-        }
-    }
-}
-```
-
 ### 寄送信件
 + url: `\api\mail`
 + method: **POST**
@@ -140,7 +86,58 @@ true
 }
 ```
 
+### 查看樣版參數格式
++ url: `\api\mail`
++ method: **GET**
++ header: 依照樣版格式填入 
 
+```
+{
+    "key": "ebs-acer-hotel-order@confirm" //Acer 飯店訂單確認信
+}
+```
+
++ 成功回應
+    
+```json=
+{
+    "subject (display title)": "Acer 飯店 - {title} 訂單成立 {orderCode}", //用大括號包起來的是可以變動的值
+    "params (request format bellow)": { //以下才是參數格式
+        "receivers": [ //發送人
+            {
+                "email": "String",
+                "name:optional": "String" //非必填
+            }
+        ],
+        "subjectParams:optional": { //標題參數
+            "title": "String",
+            "orderCode": "String"
+        },
+        "tplParams": { //樣板參數
+            "orderCode": "String|max:100",
+            "status": "String|max:10",
+            "userInfo": {
+                "name": "String|max:50",
+                "phone:optional": "String" //非必填
+            }
+        },
+        "type:optional (default: to)": "Enum|item:cc,bcc,to", //發送類型，預設 to
+        "attachmentUrls:optional (POST)": [ //夾帶檔案 - url 類型，使用 POST 方式
+            {
+                "url": "String",
+                "name:optional": "String" //非必填
+            }
+        ],
+        "attachments:optional (FILE)": {//夾帶檔案 - file 類型，使用 FILE 方式
+            "name": "Array",
+            "type": "Array",
+            "tmp_name": "Array",
+            "error": "Array",
+            "size": "Array"
+        }
+    }
+}
+```
 
 > KEY 總覽 (尚未發布正式版)
 
@@ -258,7 +255,8 @@ HTML 樣板: application/views/edm/hotel/apply/confirm/Member_v1.php
 <div><?php echo $orderCode; ?></div>
 ```
 
-+ 樣板參數 - Member_v1.php
++ 樣板參數 - Member_v1.php 
+    + 以下程式直接雷同複製貼上即可，記得修改 `namespace` 及相關設定值
 
 ```
 <?php
@@ -290,12 +288,13 @@ class Member_v1 implements TemplateInterface {
 }
 ```
 
-Step4. 製作信件工廠
+### Step4. 製作信件工廠
 
 + 路徑：`application/libraries/Api/Factory/{KEY路徑}`
 
 + 在該路徑下建立一個自定義的工廠 (不限制資料夾怎麼放置)，ex: 建立 ebs系統內的 Acer 飯店申請信件類別
     + 我將它的檔案分類放置在：`application/libraries/Api/Factory/ebs/acer/hotel/Apply.php` 
+    + 以下程式直接雷同複製貼上即可，記得修改 `namespace` 及相關設定值
     + 在檔案內建立一個 `confirm` 函式，表示為 `申請類別中的確認信件`
     + 可以組成 **KEY** 了!! 規則為 **KEY路徑@函式**
     + 此例子 KEY 為：`ebs-acer-hotel-order@confirm`
@@ -356,3 +355,7 @@ class Review extends TplParamsResponse implements MailInterface {
 }
 ```
 
+### Step5. 大功告成
+
++ 開始使用 API (詳細說明請參閱 API 說明文)
+    
