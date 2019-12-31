@@ -27,18 +27,15 @@ class Mail extends Mail_Controller
                 $obj = $obj->$classFunc($posts['tplParams']);
                 
                 $rqParams = $obj->getRequiredParams();
-                if (isset($rqParams['ValidatorError'])) {
+
+                if (isset($rqParams['ValidatorError']))
                     $this->output(HTTP_BAD_REQUEST, false, $rqParams['ValidatorError']);
-                }
                 
                 return $obj;
                 break;
             case 'GET':
                 //方便取得參數格式
-                return $this->_formatRQField(
-                            $obj->$classFunc()->getRequiredField(),
-                            $obj->$classFunc()->getSubject()
-                        );
+                return $this->_formatRQField($obj->$classFunc());
                 break;
 
             default:
@@ -47,7 +44,8 @@ class Mail extends Mail_Controller
         }
     }
 
-    private function _formatRQField($tplField, $subject) {
+    private function _formatRQField($factory) {
+        $subject = $factory->getSubject();
         preg_match_all('/(\{([a-zA-Z0-9]*)\})/', $subject, $matches);
         
         $subjectParams = [];
@@ -66,8 +64,8 @@ class Mail extends Mail_Controller
                     ]
                 ],
                 'subjectParams:optional' => $subjectParams,
-                'tplParams' => $tplField,
-                'type:optional (Default: to)'  => 'Enum|item:cc,bcc,to',
+                'tplParams' => $factory->getRequiredField(),
+                'type:optional (default: to)'  => 'Enum|item:cc,bcc,to',
                 'attachmentUrls:optional (POST)' => [
                     [
                         'url'           =>  'String',

@@ -67,8 +67,8 @@ class MailService extends PHPMailer {
         return $this;
     }
 
-    public function addFileUrl($url, $name = '') {
-        $this->addStringAttachment(file_get_contents($url), $name);
+    public function addFileUrl($url, $name = '', $extension = '', $encode = 'base64') {
+        $this->addStringAttachment(file_get_contents($url), $name, $encode, $extension);
         return $this;
     }
 

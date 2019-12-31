@@ -77,7 +77,12 @@ class SendMail extends BaseService {
             foreach ($this->params['attachmentUrls'] as $attach) {
                 if (!isset($attach['url']) || !$attach['url'])
                     continue;
-                $mailObj->addFileUrl($attach['url'], $attach['name'] ?? '');
+
+                $contentType = '';
+                if ($ext = pathinfo($attach['url'], PATHINFO_EXTENSION))
+                    config('extension', $ext) && $contentType = config('extension', $ext)[0];
+
+                $mailObj->addFileUrl($attach['url'], $attach['name'] ?? '', $contentType);
             }
         }
 
