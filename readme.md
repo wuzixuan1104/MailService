@@ -17,26 +17,26 @@
 | 參數 | 型態 | 說明 |
 | -------- | -------- |  -------- |
 | receivers  |Array |  收件人    |
-| receivers.emails |String | 收件人信箱| 
+| receivers.email |String | 收件人信箱| 
 | receivers.name |String |`optional` 收件人姓名| 
 | subjectParams  |Array | `optional` 標題參數，裡面為不固定參數 |
 | tplParams |Array | 樣版參數，裡面為不固定參數|
-| type  | Enum: to,bbc,cc | `optional` 寄送類型，預設 `to` |
-| attachmentUrls | Array    | `optional` 夾帶 url 檔案  |
-| attachmentUrls. url | String  | url 檔案    |
+| type  | Enum: to,bcc,cc | `optional` 寄送類型，預設 `to` |
+| attachmentUrls | Array    | `optional` 夾帶檔案 - 使用遠端 URL  |
+| attachmentUrls. url | String  | url 檔案路徑    |
 | attachmentUrls. name | String | `optional` 檔案名稱   |
-| attatchments |    Array | `optional` 夾帶檔案 |
+| attatchments |    Array | `optional` 夾帶檔案 - 使用本地檔案上傳 |
 
  
 ```
 [
     "receivers": [
         {
-            "emails": "shari.wu@tripsaas.com",
+            "email": "shari.wu@tripsaas.com",
             "name": "Shari Wu"
         },
         {
-            "emails": "shari1104@tripresso.com",
+            "email": "shari1104@tripresso.com",
             "name": "Shari"
         }
     ], 
@@ -161,7 +161,7 @@ define('ENVIRONMENT', 'development');
 
 ### Step2. 建立 Config 
 
-> `mailSecret.php` 放置私密寄件設定 (不加入版控)，請自行新增一份放置在所屬環境資料夾。
+> `mailSecret.php` 放置私密寄件設定 (不加入版控)，請自行新增一份放置在所屬環境資料夾，格式參照如下。
 
 ```
 <?php
@@ -189,7 +189,7 @@ $config['ebs'] = [
 > `mail.php` 各個版型設定，可自行定義，分類好就行！
 
 + 底下 **view** 表示想使用的樣板路徑
-
++ `{參數名稱}` 使用大括號，可以變動固定的標題名稱
      
 ```
 <?php
@@ -201,7 +201,7 @@ $config['ebs'] = [
             'subject' => 'Acer 飯店',
             'order' => [
                 'create'  => [
-                    'title'  => '{title} 訂單成立 {orderCode}',
+                    'title'  => '{title} 訂單成立 {orderCode}', //使用大括號表示欲變動的地方
                     'view'   => 'edm/hotel/order/confirm/V1',
                 ],
                 'confirm' => [
@@ -236,18 +236,14 @@ $config['cts'] = [
 ```
 
 ### Step3. 產生樣版
-+ 每次建立樣板，都需要產生兩個檔案，分別是：
-    + **{樣板路徑}** 需完全相同 
++ 每次建立樣板，都需要產生兩個檔案(**{樣板路徑}** 需完全相同) 分別是：
 
 > HTML 樣板：`application/views/{樣板路徑}` <br>
 > 樣板參數：`application/libraries/Api/Template/{樣板路徑}`
 
 + 兩者檔案路徑與檔名皆需相同，例如：
-
-```
-HTML 樣板: application/views/edm/hotel/apply/confirm/Member_v1.php
-樣板參數:   application/libraries/Api/Template/edm/hotel/apply/confirm/Member_v1.php
-```
+    + HTML 樣板: `application/views/edm/hotel/apply/confirm/Member_v1.php`
+    + 樣板參數: `application/libraries/Api/Template/edm/hotel/apply/confirm/Member_v1.php`
 
 + HTML 樣板 - Member_v1.php
 
