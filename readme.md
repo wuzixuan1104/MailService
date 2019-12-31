@@ -293,7 +293,7 @@ class Member_v1 implements TemplateInterface {
     + 以下程式直接雷同複製貼上即可，記得修改 `namespace` 及相關設定值
     + 在檔案內建立一個 `confirm` 函式，表示為 `申請類別中的確認信件`
     + 可以組成 **KEY** 了!! 規則為 **KEY路徑@函式**
-    + 此例子 KEY 為：`ebs-acer-hotel-order@confirm`
+    + 此例子 KEY 為：`ebs-acer-hotel-apply@confirm`
 
 ```
 <?php
