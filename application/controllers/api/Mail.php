@@ -55,8 +55,9 @@ class Mail extends Mail_Controller
         }
 
         return [    
-            'subject (display title)' => $subject,
-            'params (request format bellow)' => array_filter([ 
+            '信件標題(subject)' => $subject,
+            '樣板路徑(view)' => $factory->getView(),
+            '參數格式(params)' => array_filter([ 
                 'receivers' => [
                     [
                         'email'          => 'String',

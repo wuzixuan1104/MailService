@@ -21,11 +21,11 @@
 | receivers.name |String |`optional` 收件人姓名| 
 | subjectParams  |Array | `optional` 標題參數，裡面為不固定參數 |
 | tplParams |Array | 樣版參數，裡面為不固定參數|
-| type  | Enum: to,bcc,cc | `optional` 寄送類型，預設 `to` |
-| attachmentUrls | Array    | `optional` 夾帶檔案 - 使用遠端 URL  |
-| attachmentUrls. url | String  | url 檔案路徑    |
+| type  | Enum: to,bbc,cc | `optional` 寄送類型，預設 `to` |
+| attachmentUrls | Array    | `optional` 夾帶 url 檔案  |
+| attachmentUrls. url | String  | url 檔案    |
 | attachmentUrls. name | String | `optional` 檔案名稱   |
-| attatchments |    Array | `optional` 夾帶檔案 - 使用本地檔案上傳 |
+| attatchments |    Array | `optional` 夾帶檔案 |
 
  
 ```
@@ -101,9 +101,10 @@ true
     
 ```json=
 {
-    "subject (display title)": "Acer 飯店 - {title} 訂單成立 {orderCode}", //用大括號包起來的是可以變動的值
-    "params (request format bellow)": { //以下才是參數格式
-        "receivers": [ //發送人
+    "信件標題(subject)": "Acer 飯店 - {title} 訂單成立 {orderCode}", //用大括號包起來的是可以變動的值
+    "樣板路徑(view)": "edm/hotel/order/confirm/V1",
+    "參數格式(params)": {
+        "receivers": [ //收件人
             {
                 "email": "String",
                 "name:optional": "String" //非必填
@@ -138,15 +139,6 @@ true
     }
 }
 ```
-
-> KEY 總覽 (尚未發布正式版)
-
-### ebs - acer
-
-| 樣板 | key | url |
-| -------- | -------- | -------- |
-| 飯店訂單確認信  |  ebs-acer-hotel-order@confirm |  api/mail    |
-
 ## 程式
 
 ### Step1. 建立 env.php 檔案
@@ -161,7 +153,7 @@ define('ENVIRONMENT', 'development');
 
 ### Step2. 建立 Config 
 
-> `mailSecret.php` 放置私密寄件設定 (不加入版控)，請自行新增一份放置在所屬環境資料夾，格式參照如下。
+> `mailSecret.php` 放置私密寄件設定 (不加入版控)，請自行新增一份放置在所屬環境資料夾。
 
 ```
 <?php
@@ -189,7 +181,7 @@ $config['ebs'] = [
 > `mail.php` 各個版型設定，可自行定義，分類好就行！
 
 + 底下 **view** 表示想使用的樣板路徑
-+ `{參數名稱}` 使用大括號，可以變動固定的標題名稱
+
      
 ```
 <?php
@@ -201,7 +193,7 @@ $config['ebs'] = [
             'subject' => 'Acer 飯店',
             'order' => [
                 'create'  => [
-                    'title'  => '{title} 訂單成立 {orderCode}', //使用大括號表示欲變動的地方
+                    'title'  => '{title} 訂單成立 {orderCode}',
                     'view'   => 'edm/hotel/order/confirm/V1',
                 ],
                 'confirm' => [
@@ -236,14 +228,18 @@ $config['cts'] = [
 ```
 
 ### Step3. 產生樣版
-+ 每次建立樣板，都需要產生兩個檔案(**{樣板路徑}** 需完全相同) 分別是：
++ 每次建立樣板，都需要產生兩個檔案，分別是：
+    + **{樣板路徑}** 需完全相同 
 
 > HTML 樣板：`application/views/{樣板路徑}` <br>
 > 樣板參數：`application/libraries/Api/Template/{樣板路徑}`
 
 + 兩者檔案路徑與檔名皆需相同，例如：
-    + HTML 樣板: `application/views/edm/hotel/apply/confirm/Member_v1.php`
-    + 樣板參數: `application/libraries/Api/Template/edm/hotel/apply/confirm/Member_v1.php`
+
+```
+HTML 樣板: application/views/edm/hotel/apply/confirm/Member_v1.php
+樣板參數:   application/libraries/Api/Template/edm/hotel/apply/confirm/Member_v1.php
+```
 
 + HTML 樣板 - Member_v1.php
 
@@ -253,6 +249,7 @@ $config['cts'] = [
 
 + 樣板參數 - Member_v1.php 
     + 以下程式直接雷同複製貼上即可，記得修改 `namespace` 及相關設定值
+    + 補充：`requiredField()` 中的參數型態判斷需要符合 `Validator` 格式 (詳細請參考下方補充)
 
 ```
 <?php
@@ -293,7 +290,7 @@ class Member_v1 implements TemplateInterface {
     + 以下程式直接雷同複製貼上即可，記得修改 `namespace` 及相關設定值
     + 在檔案內建立一個 `confirm` 函式，表示為 `申請類別中的確認信件`
     + 可以組成 **KEY** 了!! 規則為 **KEY路徑@函式**
-    + 此例子 KEY 為：`ebs-acer-hotel-apply@confirm`
+    + 此例子 KEY 為：`ebs-acer-hotel-order@confirm`
 
 ```
 <?php
@@ -351,19 +348,82 @@ class Review extends TplParamsResponse implements MailInterface {
 }
 ```
 
-
 ### Step5. 大功告成
-+ 別忘了加入 LINE: **旅遊咖 - 發信系統通知**
-
-```
-【旅遊咖 - 發信系統】 [ERROR] 測試站 - 發送信件失敗 
- 
-{"tplParams":{"orderCode":"H12345566","status":"Success","userInfo":{"name":"shari"},"title":"Shari \u798f\u5229\u7db2\u5e73\u53f0","hotelName":"\u7901\u6eaa\u8001\u723a\u5927\u9152\u5e97 ","leader":"\u5433\u59ff\u8431","place":"\u5b9c\u862d ,\u53f0\u7063","postNumber":"TGE876534"},"receivers":[{"name":"\u5433\u59ff\u8431"}],"type":"bcc","attachmentUrls":[{"url":"https:\/\/dszfbyatv8d2t.cloudfront.net\/linebot\/crm\/online\/LineFile\/file\/00\/00\/00\/05\/857142150_5d27ecce347d0.pdf","name":"pdf\u6e2c\u8a66"},{"url":"http:\/\/dimg04.c-ctrip.com\/images\/\/fd\/hotel\/g5\/M07\/CB\/E0\/CggYr1b5wBeADXlwAAQOq6f2OaM702_R_550_412.jpg","name":"\u5716\u7247\u6e2c\u8a66"}],"subjectParams":{"orderCode":"H123455"}} 
- 
-請求 IP：127.0.0.1 
-樣板 Key：ebs-acer-hotel-apply@review 
-日期時間：2019-12-31 09:08:42
-```
 
 + 開始使用 API (詳細說明請參閱 API 說明文)
     
+## 補充
+
+### KEY 總覽 (尚未發布正式版)
+
+> ebs - acer
+
+| 樣板 | key | url |
+| -------- | -------- | -------- |
+| 飯店訂單確認信  |  ebs-acer-hotel-order@confirm |  api/mail    |
+
+
+### Validator 範例格式
+
++ 參數格式
+
+```
+$struct = [
+      'name'  => 'String|max:100',
+      'age'   => 'Integer|min:12|max:50',
+      'sex'   => 'Enum|item:M,F',
+      'hobbies:optional' => [
+        'details:optional' => [
+          [
+            'title:optional'   => 'String|max:100',
+            'freq:optional'    => 'Integer|min:1|max:100',
+            'other:optional'   => [
+              'name' => 'String|max:50'
+            ]
+          ]
+        ],
+        'total' => 'Integer',
+      ],
+      'contact:optional' => [
+        'phone'      => 'String|min:1',
+        'tel:optional'  => 'String|max:100',
+      ],
+      'childs:optional' => 'Array',
+      'isCancel'    =>  'Bool',
+      'updateAt:optional' => 'Datetime',
+      'cancelDate:optional' => 'Date'
+];
+```
+
++ 傳入的參數範例
+
+```
+$input = [
+      'name'  => 'Shari',
+      'age'   => 24,
+      'sex'   => 'F',
+      'hobbies' => [
+        'details' => [
+          [
+            'title' => 'Traveling',
+            'freq'  => 2,
+            'other' => [
+              'name' => '最擅長',
+            ]
+          ],
+          [
+            'title' => 'Hiking',
+            'freq'  => 1,
+          ],
+        ],
+        'total' => 2
+      ],
+      'contact' => [
+        'phone' => '0919123123',
+        'tel'   => '2623123123'
+      ],
+      'childs' => [1,3,5],
+      'isCancel' => true,
+];
+```
+

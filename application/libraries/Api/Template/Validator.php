@@ -47,8 +47,8 @@ namespace Api\Template;
         'total' => 2
       ],
       'contact' => [
-        'phone' => '0919920129',
-        'tel'   => '26232229'
+        'phone' => '0919123123',
+        'tel'   => '2623123123'
       ],
       'childs' => [1,3,5],
     ];
