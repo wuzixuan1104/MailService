@@ -31,6 +31,12 @@ class Table extends BaseService {
         return $query->row_array();
     }
 
+    public function findAll($params = [], $offset = 0, $limit = 20) {
+        if (!$query = $this->CI->db->get_where($this->table, $params, $offset, $limit))
+            return false;
+        return $query->result_array();
+    }
+
     public function insert($data) {
         if (!$column = $this->column())
             return false;
@@ -54,4 +60,3 @@ class Table extends BaseService {
     }
 }
 
-//Api/Table::create()->find($id);

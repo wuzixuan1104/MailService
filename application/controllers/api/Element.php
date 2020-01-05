@@ -27,6 +27,10 @@ class Element extends API_Controller
 
         switch (Input::method()) {
             case 'GET':
+                if ($id = Input::get('id'))
+                    $data = Table::create($table)->find($id);
+                else
+                    $data = Table::create($table)->findAll();
 
                 break;
             case 'POST':
