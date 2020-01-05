@@ -1,5 +1,6 @@
 <?php
 use Api\Mail\Send as SendMail;
+use Api\Mail\App as AppMail;
 use Utilities\LineNotifyService;
 
 abstract class Mail_Controller extends API_Controller
@@ -13,14 +14,43 @@ abstract class Mail_Controller extends API_Controller
         parent::__construct($checkAuth);
       
         $this->sendMailService = new SendMail(Input::post(), Input::file());
+        
+        if (!$this->uri->segment(3))
+            $this->output(HTTP_BAD_REQUEST, false, '[Fail] URL 缺少信件 ID');
+
+        $this->appMailServie = new AppMail($this->uri->segment(3));
+
+        $check = $this->checkAppMail();
+        if ($check !== true)
+            $this->output(HTTP_BAD_REQUEST, false, $check->error);
+
+
         $this->return = ['retState' => HTTP_OK, 'data' => false, 'errors' => []];
     }
 
+    public function checkAppMail() {
+         //檢查信件是否存在
+        $mail = $this->appMailServie->mail();
+        if ($mail->error)
+            return $mail->error;
+
+
+        $template = $this->appMailServie->template();
+        if ($template->error || ($tplParams = $template->getRQField()) === false)
+            return $template->error;
+
+
+        $sender = $this->appMailServie->sender();
+        if ($sender->error)
+            return $sender->error;
+
+        return true;
+    }
+
     public function index() {
-        
         $data = $this->doRest();
 
-        if (is_object($data)) {
+        if ($data === true) {
             $posts = Input::post();
             $files = Input::file();
 
@@ -36,6 +66,7 @@ abstract class Mail_Controller extends API_Controller
                         config('api', 'lineNotify', 'token'), 'mailChatroom'
                     );
                     
+                    
                     $this->output(HTTP_INTERNAL_SERVER_ERROR, false, '[Fail] send mail!');
                 } 
             } else {
@@ -46,6 +77,4 @@ abstract class Mail_Controller extends API_Controller
         !$data && $data = true;
         $this->output(HTTP_OK, $data, '');
     }
-
-
 }

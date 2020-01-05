@@ -4,11 +4,14 @@ namespace Api\Mail\Factory;
 use Api\Table;
 
 class Factory {
-  protected $error = '';
+  public $error = false;
+  protected $id    = '';
 
   public function __construct($id, $table) {
-    if (!$this->exists($id, $table))
+    if ($id && !$this->exists($id, $table))
       return false;
+
+    $this->id = $id;
   }
 
   public function exists($id, $table) {

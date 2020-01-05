@@ -9,45 +9,29 @@ class Mail extends Mail_Controller
     }
 
     public function doRest() {
-        // $this->uri->segment(3);
-        
-        // $factory  = $this->factoryApi;
-        // $obj = new $factory();
-        
-        // $classFunc = $this->tplType;
-        // if (!method_exists($obj, $classFunc))
-        //     $this->output(HTTP_BAD_REQUEST, false, "[Fail] 找不到 {$classFunc} 樣板！");
-
-
         switch (Input::method()) {
             case 'POST':
                 //依照key取得對應工廠的參數和版型
                 $posts = Input::post();
 
-                // if (!(isset($posts['receivers']) && $posts['receivers']))
-                //     $this->output(HTTP_BAD_REQUEST, false, 
-                //         '[Fail] 參數缺少 "receivers"');
-
-                // $obj = $obj->$classFunc($posts['tplParams']);
+                $this->_checkRQField($posts);
                 
-                // $rqParams = $obj->getRequiredParams();
+                $tplObj = $this->appMailServie->template();
 
-                // if (isset($rqParams['ValidatorError']))
-                //     $this->output(HTTP_BAD_REQUEST, false, $rqParams['ValidatorError']);
-                
-                // return $obj;
+                if ($field = $tplObj->getRQField()) {
+                    if (!(isset($posts['tplParams']) && $posts['tplParams'])) {
+                        $this->output(HTTP_BAD_REQUEST, false, '[Fail] 請傳入樣板參數！');
+                    
+                    } else {
+                        $tplObj->checkRQParams($posts['tplParams']);
+                        $tplObj->error && $this->output(HTTP_BAD_REQUEST, false, $tplObj->error);
+                    }
+                }
+                return true;
                 break;
+                
             case 'GET':
-
-                $gets = Input::get();
-                $app = new App($gets['mailId']);
-
-                $app = $app->mail();
-
-                print_r($app);
-                die;
-
-                return $this->_formatRQField($app);
+                return $this->_formatRQField();
                 break;
 
             default:
@@ -56,20 +40,22 @@ class Mail extends Mail_Controller
         }
     }
 
-    private function _formatRQField($app) {
-        // $subject = $factory->getSubject();
-        // preg_match_all('/(\{([a-zA-Z0-9]*)\})/', $subject, $matches);
+
+    private function _formatRQField() {
+        $subject = $this->appMailServie->mail()->subject;
+        preg_match_all('/(\{([a-zA-Z0-9]*)\})/', $subject, $matches);
         
-        // $subjectParams = [];
-        // if (isset($matches[2]) && $matches[2]) {
-        //     foreach ($matches[2] as $match)
-        //         $match && $subjectParams[$match] = 'String';
-        // }
+        $subjectParams = [];
+        if (isset($matches[2]) && $matches[2]) {
+            foreach ($matches[2] as $match)
+                $match && $subjectParams[$match] = 'String';
+        }
+
+        $tplParams = $this->appMailServie->template()->getRQField();
 
         return [    
-            '信件標題(subject)' => $subject,
-            '樣板路徑(view)' => $factory->getView(),
-            '參數格式(params)' => array_filter([ 
+            'MailSubject' => $subject,
+            'MailParams' => array_filter([ 
                 'receivers' => [
                     [
                         'email'          => 'String',
@@ -77,8 +63,9 @@ class Mail extends Mail_Controller
                     ]
                 ],
                 'subjectParams:optional' => $subjectParams,
-                'tplParams' => $factory->getRequiredField(),
+                'tplParams' => $tplParams,
                 'type:optional (default: to)'  => 'Enum|item:cc,bcc,to',
+                'text'  =>  !$tplParams ? 'String' : false, //如果沒有樣板格式，可以傳入文字訊息
                 'attachmentUrls:optional (POST)' => [
                     [
                         'url'           =>  'String',
@@ -92,8 +79,22 @@ class Mail extends Mail_Controller
                     'error'     => 'Array',
                     'size'      => 'Array'
                 ]
-            ])
+            ]),
         ];
+    }
+
+    private function _checkRQField($posts) {
+        if (!(isset($posts['receivers']) && is_array($posts['receivers']) && $posts['receivers']))
+            $this->output(HTTP_BAD_REQUEST, false, '[Fail] 參數格式錯誤 "receivers"，型態：Array');
+
+        if (isset($posts['type']) && $posts['type'] && !in_array($posts['type'], ['to', 'bcc', 'cc']))
+            $this->output(HTTP_BAD_REQUEST, false, '[Fail] 參數格式錯誤 "type"，格式：to, bcc, cc');
+
+        if (isset($posts['attachmentUrls']) && $posts['attachmentUrls'] && !is_array($posts['attachmentUrls']))
+            $this->output(HTTP_BAD_REQUEST, false, '[Fail] 參數格式錯誤 "attachmentUrls"，型態：Array');
+        
+        if (isset($posts['tplParams']) && $posts['tplParams'] && !is_array($posts['tplParams']))
+            $this->output(HTTP_BAD_REQUEST, false, '[Fail] 參數格式錯誤 "tplParams"，型態：Array');
     }
 }
 

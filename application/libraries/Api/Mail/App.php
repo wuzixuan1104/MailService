@@ -4,6 +4,7 @@ namespace Api\Mail;
 use Api\Mail\Factory\Mail;
 use Api\Mail\Factory\Sender;
 use Api\Mail\Factory\Template;
+use Api\Mail\Factory\HeaderFooter;
 
 class App {
   private $id;
@@ -16,8 +17,6 @@ class App {
 
   public function __construct($id) {
     $this->id = $id;
-    if (!$this->mail())
-      return $this->mail;
   }
 
   public function mail() {
@@ -31,7 +30,7 @@ class App {
     if (self::$templateModel !== null)
       return self::$templateModel;
 
-    if (self::$mailModel == null || self::$mailModel->error)
+    if (!$this->mail())
       return $this->mail();
 
     return self::$templateModel = new Template(self::$mailModel->templateId);
@@ -41,17 +40,17 @@ class App {
     if (self::$senderModel !== null)
       return self::$senderModel;
 
-    if (self::$mailModel == null || self::$mailModel->error)
+    if (!$this->mail())
       return $this->mail();
 
-    return self::$senderModel = new Template(self::$mailModel->senderId);
+    return self::$senderModel = new Sender(self::$mailModel->senderId);
   }
 
   public function header() {
     if (self::$headerModel !== null)
       return self::$headerModel;
 
-    if (self::$senderModel == null || self::$senderModel->error)
+    if (!$this->sender())
       return $this->sender();
 
     return self::$headerModel = (new HeaderFooter(self::$senderModel->headerId))
@@ -62,7 +61,7 @@ class App {
     if (self::$footerModel !== null)
       return self::$footerModel;
 
-    if (self::$senderModel == null || self::$senderModel->error)
+    if (!$this->sender())
       return $this->sender();
 
     return self::$footerModel = (new HeaderFooter(self::$senderModel->footerId))
