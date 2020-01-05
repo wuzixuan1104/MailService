@@ -8,7 +8,6 @@ class Migration_insert_Sender extends CI_Migration {
       $data = [
         [
           'source'   => "b2c",
-          'type'     => "default",
           'fromMail' => "service@tripresso.com",
           'fromName' => "Tripresso 系統通知信"
         ]

@@ -6,8 +6,7 @@ class Migration_create_Log extends CI_Migration {
     if(!$this->db->table_exists('Log')) {
 
       $this->dbforge->add_field("`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' PRIMARY KEY"); 
-      $this->dbforge->add_field("`templateId` int(11)  NOT NULL DEFAULT 0 COMMENT '樣板ID'"); 
-      $this->dbforge->add_field("`senderId` int(11)  NOT NULL DEFAULT 0 COMMENT '寄件者ID'"); 
+      $this->dbforge->add_field("`mailId` int(11)  NOT NULL DEFAULT 0 COMMENT '信件 ID'"); 
       $this->dbforge->add_field("`status` tinyint(1)  NOT NULL DEFAULT 0 COMMENT '狀態，0: 失敗 1: 成功'"); 
       $this->dbforge->add_field("`ip` varchar(50)  NOT NULL DEFAULT '' COMMENT '呼叫來源IP位址'"); 
       $this->dbforge->add_field("`params` text  NOT NULL  COMMENT '參數'"); 

@@ -1,5 +1,5 @@
 <?php
-use Api\SendMail;
+use Api\Mail\Send as SendMail;
 use Utilities\LineNotifyService;
 
 abstract class Mail_Controller extends API_Controller
@@ -11,46 +11,9 @@ abstract class Mail_Controller extends API_Controller
 
     public function __construct($checkAuth = true) {
         parent::__construct($checkAuth);
-
-        if (!$key = Input::requestHeader('key'))
-            $this->output(
-                HTTP_NOT_FOUND, false, 
-                '[Fail] missing 1 params named "key", ex: ebs-acer-hotel or b2c-group'
-            );
-
-        if (!$this->isKeyExist($key))
-            $this->output(
-                HTTP_NOT_FOUND, false, 
-                '[Fail] 參數 "key" 錯誤！找不到該路徑'
-            );
-        
       
         $this->sendMailService = new SendMail(Input::post(), Input::file());
         $this->return = ['retState' => HTTP_OK, 'data' => false, 'errors' => []];
-    }
-
-    protected function isKeyExist($key) {
-        $keys = explode('@', $key);
-        if (count($keys) != 2)
-            return false;
-
-        $this->tplType = end($keys);
-        if (!$path = array_map('trim', explode('-', str_replace('@' . $this->tplType, '', $key))))
-            return false;
-
-        $file = array_pop($path);
-        array_push($path, ucfirst($file));
-
-        $path = 'Api' . DIRECTORY_SEPARATOR . 'Factory' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $path);
-
-        $factoryFile = PATH_LIB . $path . '.php';
-        if (!file_exists($factoryFile))
-            return false;
-
-        include_once($factoryFile);
-
-        $this->factoryApi = str_replace('/', '\\', $path);
-        return true;
     }
 
     public function index() {

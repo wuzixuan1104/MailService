@@ -1,10 +1,10 @@
 <?php 
-namespace Api;
+namespace Api\Mail;
 
 use \Services\MailService;
 use \Services\BaseService;
 
-class SendMail extends BaseService {
+class Send extends BaseService {
     private $mailBody = '';
     public $username, $password, $fromName, $subject;
     public $params = [];

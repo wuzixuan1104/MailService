@@ -1,5 +1,7 @@
 <?php
 
+use Api\Mail\App;
+
 class Mail extends Mail_Controller
 {   
     public function __construct() {
@@ -7,12 +9,14 @@ class Mail extends Mail_Controller
     }
 
     public function doRest() {
-        $factory  = $this->factoryApi;
-        $obj = new $factory();
+        // $this->uri->segment(3);
         
-        $classFunc = $this->tplType;
-        if (!method_exists($obj, $classFunc))
-            $this->output(HTTP_BAD_REQUEST, false, "[Fail] 找不到 {$classFunc} 樣板！");
+        // $factory  = $this->factoryApi;
+        // $obj = new $factory();
+        
+        // $classFunc = $this->tplType;
+        // if (!method_exists($obj, $classFunc))
+        //     $this->output(HTTP_BAD_REQUEST, false, "[Fail] 找不到 {$classFunc} 樣板！");
 
 
         switch (Input::method()) {
@@ -20,22 +24,30 @@ class Mail extends Mail_Controller
                 //依照key取得對應工廠的參數和版型
                 $posts = Input::post();
 
-                if (!(isset($posts['receivers']) && $posts['receivers']))
-                    $this->output(HTTP_BAD_REQUEST, false, 
-                        '[Fail] 參數缺少 "receivers"');
+                // if (!(isset($posts['receivers']) && $posts['receivers']))
+                //     $this->output(HTTP_BAD_REQUEST, false, 
+                //         '[Fail] 參數缺少 "receivers"');
 
-                $obj = $obj->$classFunc($posts['tplParams']);
+                // $obj = $obj->$classFunc($posts['tplParams']);
                 
-                $rqParams = $obj->getRequiredParams();
+                // $rqParams = $obj->getRequiredParams();
 
-                if (isset($rqParams['ValidatorError']))
-                    $this->output(HTTP_BAD_REQUEST, false, $rqParams['ValidatorError']);
+                // if (isset($rqParams['ValidatorError']))
+                //     $this->output(HTTP_BAD_REQUEST, false, $rqParams['ValidatorError']);
                 
-                return $obj;
+                // return $obj;
                 break;
             case 'GET':
-                //方便取得參數格式
-                return $this->_formatRQField($obj->$classFunc());
+
+                $gets = Input::get();
+                $app = new App($gets['mailId']);
+
+                $app = $app->mail();
+
+                print_r($app);
+                die;
+
+                return $this->_formatRQField($app);
                 break;
 
             default:
@@ -44,15 +56,15 @@ class Mail extends Mail_Controller
         }
     }
 
-    private function _formatRQField($factory) {
-        $subject = $factory->getSubject();
-        preg_match_all('/(\{([a-zA-Z0-9]*)\})/', $subject, $matches);
+    private function _formatRQField($app) {
+        // $subject = $factory->getSubject();
+        // preg_match_all('/(\{([a-zA-Z0-9]*)\})/', $subject, $matches);
         
-        $subjectParams = [];
-        if (isset($matches[2]) && $matches[2]) {
-            foreach ($matches[2] as $match)
-                $match && $subjectParams[$match] = 'String';
-        }
+        // $subjectParams = [];
+        // if (isset($matches[2]) && $matches[2]) {
+        //     foreach ($matches[2] as $match)
+        //         $match && $subjectParams[$match] = 'String';
+        // }
 
         return [    
             '信件標題(subject)' => $subject,

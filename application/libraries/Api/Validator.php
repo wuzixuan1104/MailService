@@ -1,5 +1,5 @@
 <?php
-namespace Api\Template;
+namespace Api;
 
 /*  範例規格參照：
 
