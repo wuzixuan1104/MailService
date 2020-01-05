@@ -79,7 +79,7 @@ class Mail extends Mail_Controller
                     'tmp_name'  => 'Array',
                     'error'     => 'Array',
                     'size'      => 'Array'
-                ]
+                ],
             ]),
         ];
     }

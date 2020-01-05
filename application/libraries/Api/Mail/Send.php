@@ -30,7 +30,7 @@ class Send extends BaseService {
         //等等刪除
         $this->password = 'shari1104';
 
-        $this->subject  = $sender = $app->mail()->subject($this->params);
+        $this->subject  = $app->mail()->subject($this->params);
 
         $this->mailBody = $app->header()->html() . 
                           ($this->params['text'] ?? $app->template()->html()) .

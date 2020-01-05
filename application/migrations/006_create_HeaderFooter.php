@@ -11,7 +11,7 @@ class Migration_create_HeaderFooter extends CI_Migration {
       $this->dbforge->add_field("`pic` varchar(150)  NOT NULL DEFAULT '' COMMENT '圖示'"); 
       $this->dbforge->add_field("`content` text  NOT NULL  COMMENT 'html 內容'"); 
       $this->dbforge->add_field("`params` text  NOT NULL  COMMENT '參數'"); 
-      $this->dbforge->add_field("`version` int(11)  NOT NULL DEFAULT 0 COMMENT '版本'"); 
+      $this->dbforge->add_field("`version` int(11)  NOT NULL DEFAULT 1 COMMENT '版本'"); 
       $this->dbforge->add_field("`createAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '新增時間'"); 
       $this->dbforge->add_field("`updateAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間'"); 
 
