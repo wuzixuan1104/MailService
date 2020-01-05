@@ -26,10 +26,11 @@ class Mail extends Mail_Controller
                         $tplObj->checkRQParams($posts['tplParams']);
                         $tplObj->error && $this->output(HTTP_BAD_REQUEST, false, $tplObj->error);
                     }
+
                 }
                 return true;
                 break;
-                
+
             case 'GET':
                 return $this->_formatRQField();
                 break;

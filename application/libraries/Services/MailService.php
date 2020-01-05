@@ -6,18 +6,14 @@ use \SMTP;
 
 class MailService extends PHPMailer {
 
-    public static function create($username = null, $password = null, $fromName = null) {
-        $username !== null || $username = config('mailSecret', 'default', 'username');
-        $password !== null || $password = config('mailSecret', 'default', 'password');
-        $fromName !== null || $fromName = config('mailSecret', 'default', 'fromName');
-
-        if (!$username || !$password)
+    public static function create($fromMail = null, $password = null, $fromName = null) {
+        if (!$fromMail || !$password)
             return false;
 
-        return new static($username, $password, $fromName);
+        return new static($fromMail, $password, $fromName);
     }
 
-    public function __construct($username, $password, $fromName) {
+    public function __construct($fromMail, $password, $fromName) {
         parent::__construct();
 
         $config = config('mailSecret', 'default');
@@ -28,11 +24,11 @@ class MailService extends PHPMailer {
         $this->isSMTP();
         $this->SMTPAuth = true;
 
-        $this->Username = $username;
+        $this->Username = $fromMail;
         $this->Password = $password;
         $this->FromName = $fromName;
 
-        $this->From = $username;
+        $this->From = $fromMail;
         $this->isHTML(true);
         $this->WordWrap = 50;
 

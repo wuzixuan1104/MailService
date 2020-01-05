@@ -54,7 +54,7 @@ class App {
       return $this->sender();
 
     return self::$headerModel = (new HeaderFooter(self::$senderModel->headerId))
-                                  ->setParams(self::$senderModel->headerParams);
+                                  ->checkRQParams(self::$senderModel->headerParams);
   }
 
   public function footer() {
@@ -65,6 +65,6 @@ class App {
       return $this->sender();
 
     return self::$footerModel = (new HeaderFooter(self::$senderModel->footerId))
-                                  ->setParams(self::$senderModel->footerParams);
+                                  ->checkRQParams(self::$senderModel->footerParams);
   }
 }

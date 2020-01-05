@@ -21,7 +21,7 @@ abstract class Mail_Controller extends API_Controller
         $this->appMailServie = new AppMail($this->uri->segment(3));
 
         $check = $this->checkAppMail();
-        if ($check !== true)
+        if ($check !== true) 
             $this->output(HTTP_BAD_REQUEST, false, $check->error);
 
 
@@ -32,17 +32,23 @@ abstract class Mail_Controller extends API_Controller
          //檢查信件是否存在
         $mail = $this->appMailServie->mail();
         if ($mail->error)
-            return $mail->error;
-
+            return $mail;
 
         $template = $this->appMailServie->template();
         if ($template->error || ($tplParams = $template->getRQField()) === false)
-            return $template->error;
-
+            return $template;
 
         $sender = $this->appMailServie->sender();
         if ($sender->error)
-            return $sender->error;
+            return $sender;
+
+        $header = $this->appMailServie->header();
+        if ($header->error)
+            return $header;
+
+        $footer = $this->appMailServie->footer();
+        if ($footer->error)
+            return $footer;
 
         return true;
     }
@@ -54,7 +60,7 @@ abstract class Mail_Controller extends API_Controller
             $posts = Input::post();
             $files = Input::file();
 
-            if ($prepare = $this->sendMailService->prepare($data)) {
+            if ($prepare = $this->sendMailService->prepare($this->appMailServie)) {
                 if (!$data = $prepare->send()) {
                     \Log::error('信件發送錯誤', $data, $posts);
 
@@ -66,7 +72,7 @@ abstract class Mail_Controller extends API_Controller
                         config('api', 'lineNotify', 'token'), 'mailChatroom'
                     );
                     
-                    
+
                     $this->output(HTTP_INTERNAL_SERVER_ERROR, false, '[Fail] send mail!');
                 } 
             } else {

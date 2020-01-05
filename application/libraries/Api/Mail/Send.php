@@ -3,10 +3,11 @@ namespace Api\Mail;
 
 use \Services\MailService;
 use \Services\BaseService;
+use Api\Table;
 
 class Send extends BaseService {
     private $mailBody = '';
-    public $username, $password, $fromName, $subject;
+    public $fromMail, $password, $fromName, $subject;
     public $params = [];
     public $files = [];
 
@@ -18,38 +19,28 @@ class Send extends BaseService {
         $this->files  = $files;
     }
 
-    public function prepare($factory) {
-        $mailSecret = $factory->getMailSecret();
+    public function prepare($app) {
+        $sender = $app->sender();
 
-        if (!($mailSecret && isset($mailSecret['username'], $mailSecret['password'], $mailSecret['fromName']) && 
-            $mailSecret['username'] && $mailSecret['password']))
-            return false;
+        //取得預設 Mail
+        $d4Sender = Table::create('Sender')->find(1);
+        $sender->fromMail && ($this->fromMail = $sender->fromMail) || $d4Sender['fromMail'];
+        $sender->fromName && ($this->fromName = $sender->fromName) || $d4Sender['fromName'];  
+        
+        //等等刪除
+        $this->password = 'shari1104';
 
-        $view = $factory->getView();
-        if (!$view || $view == null)
-            return false;
+        $this->subject  = $sender = $app->mail()->subject($this->params);
 
-        //內容套版
-        $this->mailBody = $this->CI->load->view($factory->getView(), $factory->getRequiredParams(), true);
-        if (!$this->mailBody || $this->mailBody == '')
-            return false;
-
-        $this->username = $mailSecret['username'];
-        $this->password = $mailSecret['password'];
-        $this->fromName = $mailSecret['fromName'];
-        $this->subject  = $factory->getSubject();
-
-        //信件標題套版
-        if (isset($this->params['subjectParams']) && is_array($this->params['subjectParams']) && $this->params['subjectParams']) {
-            foreach ($this->params['subjectParams'] as $k => $v)
-                $this->subject = str_replace('{' . $k . '}', $v, $this->subject);
-        }
+        $this->mailBody = $app->header()->html() . 
+                          ($this->params['text'] ?? $app->template()->html()) .
+                          $app->footer()->html();  
 
         return $this;
     }
 
     public function send() {
-        $mailObj = MailService::create($this->username, $this->password, $this->fromName)
+        $mailObj = MailService::create($this->fromMail, $this->password, $this->fromName)
                     ->setSubject($this->subject)
                     ->setBody($this->mailBody);
 

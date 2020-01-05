@@ -1052,3 +1052,17 @@ class Log {
         return $return;
     }
 }
+
+if (!function_exists('loadView')) {
+  function loadView($___ViewStr___, $___Params__ = []) {
+
+    extract($___Params__);
+    ob_start();
+
+    eval('?>' . $___ViewStr___);
+    $buffer = ob_get_contents();
+    @ob_end_clean();
+
+    return $buffer;
+  }
+}

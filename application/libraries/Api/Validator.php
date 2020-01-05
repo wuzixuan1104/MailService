@@ -76,7 +76,7 @@ class Validator {
     public static function keyType($k, $input) {
         $pos = strpos($k, 'optional');
         if (!$pos) { //is must
-            if (!array_key_exists($k, $input)) {
+            if (is_string($input) || !array_key_exists($k, $input)) {
                 self::$errorMsg = '[樣板參數傳入錯誤] 缺少必填值 KEY: ' . $k;
                 return '+1';
             }
